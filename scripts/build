@@ -56,7 +56,7 @@ docker-build() {
         --tag "$target" .
 
     if [[ -n $publishflag ]]; then
-        docker image push "$image"
+        docker image push "$target"
     fi
 }
 
