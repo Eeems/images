@@ -50,9 +50,13 @@ docker-build() {
     image="$1"
     target="$(image-name "$image" "$2")"
     status "Building image '$target'"
+    if [ $(docker run "$target" checkupdates | wc -l) != 0 ];then
+        shouldcache="--no-cache"
+    fi
     docker image build \
         --build-arg BUILDKIT_INLINE_CACHE=1 \
         --build-arg FROM="$(image-name "$image" latest)" \
+        $shouldcache \
         --tag "$target" .
 
     if [[ -n $publishflag ]]; then
