@@ -2,8 +2,9 @@ name: build
 on:
     push:
         branches:
-            - v1.x
-            - v2.x
+            - main
+    schedule:
+        - cron: '0 2 * * *' # run at 2 AM UTC
 jobs:
     build:
         name: Publish latest
