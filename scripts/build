@@ -67,12 +67,11 @@ pushd "$imagesdir"
     docker-build "$image" latest
     popd
     \ls | while read tag;do
-        if [[ "$tag" -eq "latest" ]];then
-            continue
+        if [[ "$tag" != "latest" ]];then
+            pushd "$tag"
+            docker-build "$image" "$tag"
+            popd
         fi
-        pushd "$tag"
-        docker-build "$image" "$tag"
-        popd
     done
     popd
 done
