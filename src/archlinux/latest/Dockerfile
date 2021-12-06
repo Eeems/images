@@ -1,4 +1,4 @@
-FROM registry.eeems.codes/archlinux:base-devel
+FROM archlinux:base-devel
 
 RUN useradd -m notroot
 
@@ -16,7 +16,7 @@ RUN mkdir .gnupg && \
 RUN sudo pacman-key --init && \
     sudo pacman-key --recv A64228CCD26972801C2CE6E3EC931EA46980BA1B --keyserver keyserver.ubuntu.com && \
     sudo pacman-key --lsign A64228CCD26972801C2CE6E3EC931EA46980BA1B && \
-    sudo curl --header 'Host: repo.eeems.codes' http://nginx.:89/eeems-keyring.tar.zst --output eeems-keyring.tar.zst && \
+    sudo curl --header 'Host: repo.eeems.codes' https://repo.eeems.codes/eeems-keyring.tar.zst --output eeems-keyring.tar.zst && \
     sudo pacman -U --noconfirm ./eeems-keyring.tar.zst && \
     sudo rm eeems-keyring.tar.zst && \
     echo '[eeems-3ds]' | sudo tee -a /etc/pacman.conf && \
