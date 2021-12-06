@@ -52,7 +52,7 @@ docker-build() {
     status "Building image '$target'"
     docker image build \
         --build-arg BUILDKIT_INLINE_CACHE=1 \
-        --build-arg FROM="$image:latest" \
+        --build-arg FROM="$(image-name "$image" latest)" \
         --tag "$target" .
 
     if [[ -n $publishflag ]]; then
