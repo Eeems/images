@@ -51,7 +51,10 @@ docker-build() {
     target="$(image-name "$image" "$2")"
     status "Building image '$target'"
     if [ $(docker run "$target" /usr/bin/checkupdates | wc -l) != 0 ];then
+        echo "Updates detected!"
         shouldcache="--no-cache"
+    else
+        shouldcache=""
     fi
     docker image build \
         --build-arg BUILDKIT_INLINE_CACHE=1 \
