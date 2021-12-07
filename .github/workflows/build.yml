@@ -20,4 +20,4 @@ jobs:
                   password: ${{ secrets.CR_PAT }}
             - name: Build and publish images
               run: |
-                ./scripts/build -p src
+                ./scripts/build -p images

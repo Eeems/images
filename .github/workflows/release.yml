@@ -19,4 +19,4 @@ jobs:
             - name: Build and publish images
               run: |
                 version="$(echo "${{ github.ref }}" | cut -d / -f 3)"
-                ./scripts/build -p src "$version"
+                ./scripts/build -p images "$version"
