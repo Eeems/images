@@ -5,7 +5,6 @@ source "${BASH_SOURCE%/*}"/lib
 
 usage="$0 [OPTION]... IMAGESDIR
 Build the Docker images under the IMAGESDIR directory.
-Label each built image with the given VERSION number (default: latest).
 The build takes advantage of any reusable layer from previously built images.
 Options:
     -h              Show this help message."
