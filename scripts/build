@@ -42,9 +42,10 @@ export DOCKER_BUILDKIT=1
 docker-build() {
     image="$1"
     target="$(image-name "$image" "$2")"
-    status "Building image '$target'"
+    status "Checking image '$target'"
     updates=$(docker run "$target" /usr/bin/checkupdates 2> /dev/null | wc -l)
     if [[ "$(docker inspect "$target" 2> /dev/null)" == "[]" ]] ||  [ $updates != 0 ];then
+        status "Building image '$target'"
         docker image build \
             --build-arg BUILDKIT_INLINE_CACHE=1 \
             --build-arg FROM="$(image-name "$image" latest)" \
@@ -54,21 +55,21 @@ docker-build() {
     fi
 }
 
-pushd "$imagesdir"
+pushd "$imagesdir" > /dev/null
 \ls | while read image;do
-    pushd "$image"
-    pushd latest
+    pushd "$image" > /dev/null
+    pushd latest > /dev/null
     docker-build "$image" latest
-    popd
+    popd > /dev/null
     \ls | while read tag;do
         if [[ "$tag" != "latest" ]];then
-            pushd "$tag"
+            pushd "$tag" > /dev/null
             docker-build "$image" "$tag"
-            popd
+            popd > /dev/null
         fi
     done
-    popd
+    popd > /dev/null
 done
-popd
+popd > /dev/null
 
 status "Done"
