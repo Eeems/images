@@ -1,3 +1,4 @@
+[![build](https://github.com/Eeems/images/actions/workflows/build.yml/badge.svg)](https://github.com/Eeems/images/actions/workflows/build.yml)
 # Container Images
 Generates container images nightly and pushes them to a private registry.
 
