@@ -54,13 +54,13 @@ docker-build() {
         echo "Updates detected!"
         shouldcache="--no-cache"
     else
-        shouldcache=""
+        shouldcache="--cache-from /tmp/.buildx-cache"
     fi
     docker buildx build \
         --build-arg BUILDKIT_INLINE_CACHE=1 \
         --build-arg FROM="$(image-name "$image" latest)" \
         $shouldcache \
-        --cache-to /tmp/.buildx-cache \
+        --cache-to /tmp/.buildx-cache-new \
         --tag "$target" .
 
     if [[ -n $publishflag ]]; then
