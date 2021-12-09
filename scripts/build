@@ -47,13 +47,12 @@ docker-build() {
         echo "Updates detected!"
         shouldcache="--no-cache"
     else
-        shouldcache="--pull --cache-from /tmp/.buildx-cache --cache-from '$target'"
+        shouldcache="--pull --cache-from '$target'"
     fi
     docker buildx build \
         --build-arg BUILDKIT_INLINE_CACHE=1 \
         --build-arg FROM="$(image-name "$image" latest)" \
         $shouldcache \
-        --cache-to "$target" \
         --tag "$target" . \
         --push
 }
