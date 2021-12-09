@@ -61,7 +61,8 @@ docker-build() {
         --build-arg FROM="$(image-name "$image" latest)" \
         $shouldcache \
         --cache-to /tmp/.buildx-cache-new \
-        --tag "$target" .
+        --tag "$target" . \
+        --output type=image
 
     if [[ -n $publishflag ]]; then
         docker image push "$target"
