@@ -43,10 +43,12 @@ docker-build() {
     image="$1"
     target="$(image-name "$image" "$2")"
     status "Building image '$target'"
-    if [ $(docker run "$target" /usr/bin/checkupdates 2> /dev/stdout | wc -l) != 0 ];then
+    updates=$(docker run "$target" /usr/bin/checkupdates 2> /dev/null | wc -l)
+    if [[ "$(docker inspect "$target" 2> /dev/null)" == "[]" ]] ||  [ $updates != 0 ];then
         docker image build \
             --build-arg BUILDKIT_INLINE_CACHE=1 \
             --build-arg FROM="$(image-name "$image" latest)" \
+            --no-cache \
             --tag "$target" .
         docker image push "$target"
     fi
