@@ -30,7 +30,7 @@ jobs:
                   password: ${{ secrets.CR_PAT }}
             - name: Build and publish images
               run: |
-                ./scripts/build -p images
+                ./scripts/build images
             - name: Move cache
               run: |
                 rm -rf /tmp/.buildx-cache
