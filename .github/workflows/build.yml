@@ -29,3 +29,7 @@ jobs:
             - name: Build and publish images
               run: |
                 ./scripts/build -p images
+            - name: Move cache
+              run: |
+                rm -rf /tmp/.buildx-cache
+                mv /tmp/.buildx-cache-new /tmp/.buildx-cache
