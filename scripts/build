@@ -43,18 +43,14 @@ docker-build() {
     image="$1"
     target="$(image-name "$image" "$2")"
     status "Building image '$target'"
-    if [ $(docker run "$target" /usr/bin/checkupdates | wc -l) != 0 ];then
-        echo "Updates detected!"
-        shouldcache="--no-cache"
-    else
-        shouldcache="--cache-from '$target'"
+    if [ $(docker run "$target" /usr/bin/checkupdates 2> /dev/stdout | wc -l) != 0 ];then
+        docker image build \
+            --build-arg BUILDKIT_INLINE_CACHE=1 \
+            --build-arg FROM="$(image-name "$image" latest)" \
+            $shouldcache \
+            --tag "$target" .
+        docker image push "$target"
     fi
-    docker image build \
-        --build-arg BUILDKIT_INLINE_CACHE=1 \
-        --build-arg FROM="$(image-name "$image" latest)" \
-        $shouldcache \
-        --tag "$target" .
-    docker image push "$target"
 }
 
 pushd "$imagesdir"
