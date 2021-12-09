@@ -8,18 +8,13 @@ Build the Docker images under the IMAGESDIR directory.
 Label each built image with the given VERSION number (default: latest).
 The build takes advantage of any reusable layer from previously built images.
 Options:
-    -h              Show this help message.
-    -p              Publish each built image to the GitHub Container Registry
-                    (you need to be logged in to ghcr.io with the appropriate
-                    permissions for this to work)."
+    -h              Show this help message."
 
 helpflag=
-publishflag=
 
 while getopts hp name; do
     case $name in
         h) helpflag=1 ;;
-        p) publishflag=1 ;;
         *) error "Invalid option. Use the -h flag for more information." ;;
     esac
 done
@@ -54,19 +49,15 @@ docker-build() {
         echo "Updates detected!"
         shouldcache="--no-cache"
     else
-        shouldcache="--cache-from /tmp/.buildx-cache"
+        shouldcache="--pull --cache-from /tmp/.buildx-cache --cache-from '$target'"
     fi
     docker buildx build \
         --build-arg BUILDKIT_INLINE_CACHE=1 \
         --build-arg FROM="$(image-name "$image" latest)" \
         $shouldcache \
-        --cache-to /tmp/.buildx-cache-new \
+        --cache-to "$target" \
         --tag "$target" . \
-        --output type=image
-
-    if [[ -n $publishflag ]]; then
-        docker image push "$target"
-    fi
+        --push
 }
 
 pushd "$imagesdir"
