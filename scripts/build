@@ -47,7 +47,6 @@ docker-build() {
         docker image build \
             --build-arg BUILDKIT_INLINE_CACHE=1 \
             --build-arg FROM="$(image-name "$image" latest)" \
-            $shouldcache \
             --tag "$target" .
         docker image push "$target"
     fi
