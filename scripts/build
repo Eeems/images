@@ -56,10 +56,11 @@ docker-build() {
     else
         shouldcache=""
     fi
-    docker image build \
+    docker buildx build \
         --build-arg BUILDKIT_INLINE_CACHE=1 \
         --build-arg FROM="$(image-name "$image" latest)" \
         $shouldcache \
+        --cache-to /tmp/.buildx-cache \
         --tag "$target" .
 
     if [[ -n $publishflag ]]; then
