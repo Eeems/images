@@ -33,6 +33,6 @@ RUN sudo pacman-key --init && \
 
 RUN sudo pacman -Syu --noconfirm && \
     sudo pacman -S --noconfirm yay namcap git rsync openssh clang llvm && \
-    yay -S --noconfirm checkupdates+aur
+    yay -S --noconfirm checkupdates+aur chronic
 
 WORKDIR /pkg
