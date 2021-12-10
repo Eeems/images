@@ -53,10 +53,11 @@ docker-build(){
     image="$1"
     target="$(image-name "$image" "$2")"
     status "Checking image '$target'"
+    hash=$(md5sum Dockerfile)
     if [[ "$(docker inspect "$target" 2> /dev/null)" == "[]" ]];then
         echo "  Image missing"
         updates = 1
-    elif [[ "$(grep "\S" --color=none Dockerfile)" != "$(docker run -v /var/run/docker.sock:/var/run/docker.sock --rm cucker/image2df "$target" 2> /dev/null | tail -n +3 | sed 's|# buildkit$||g')" ]];then
+    elif [[ "$(docker run --pull=always "$target" cat /hash 2> /dev/null)" != "$hash" ]];then
         echo "  Dockerfile changed"
         updates=1
     else
@@ -67,12 +68,16 @@ docker-build(){
     fi
     if [ $updates != 0 ];then
         status "Building image '$target'"
-        docker image build \
+        echo "$hash" > .hash
+        echo "COPY .hash /hash" > .tmp.dockerfile
+        cat Dockerfile .tmp.dockerfile | docker image build \
             --build-arg BUILDKIT_INLINE_CACHE=1 \
             --build-arg FROM="$(image-name "$image" latest)" \
             --no-cache \
-            --tag "$target" .
+            --tag "$target" -f - .
         docker image push "$target"
+        rm .hash
+        rm .tmp.dockerfile
     fi
 }
 
