@@ -26,5 +26,5 @@ jobs:
                   password: ${{ secrets.CR_PAT }}
             - name: Build and publish images
               run: |
-                docker system prune
+                docker system prune --force
                 ./scripts/build images
