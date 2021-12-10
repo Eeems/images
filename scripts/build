@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
 set -e
-source "${BASH_SOURCE%/*}"/lib
-
 usage="$0 [OPTION]... IMAGESDIR
 Build the Docker images under the IMAGESDIR directory.
 The build takes advantage of any reusable layer from previously built images.
@@ -10,6 +8,18 @@ Options:
     -h              Show this help message."
 
 helpflag=
+
+error() {
+    echo "Error: $1" >&2
+    exit 1
+}
+status() {
+    echo "=> $1" >&2
+}
+image-name() {
+    echo "registry.eeems.codes/$1:${2:-latest}"
+}
+
 
 while getopts hp name; do
     case $name in
@@ -39,12 +49,23 @@ imagesdir="$1"
 # See <https://docs.docker.com/engine/reference/builder/#buildkit>
 export DOCKER_BUILDKIT=1
 
-docker-build() {
+docker-build(){
     image="$1"
     target="$(image-name "$image" "$2")"
     status "Checking image '$target'"
-    updates=$(docker run "$target" /usr/bin/checkupdates 2> /dev/null | wc -l)
-    if [[ "$(docker inspect "$target" 2> /dev/null)" == "[]" ]] ||  [ $updates != 0 ];then
+    if [[ "$(docker inspect "$target" 2> /dev/null)" == "[]" ]];then
+        echo "  Image missing"
+        updates = 1
+    elif [[ "$(grep "\S" --color=none Dockerfile)" != "$(docker run -v /var/run/docker.sock:/var/run/docker.sock --rm cucker/image2df "$target" 2> /dev/null | tail -n +3 | sed 's|# buildkit$||g')" ]];then
+        echo "  Dockerfile changed"
+        updates=1
+    else
+        updates=$(docker run "$target" /usr/bin/checkupdates 2> /dev/null | wc -l)
+        if [ $updates != 0 ];then
+            echo "  Updates detected"
+        fi
+    fi
+    if [ $updates != 0 ];then
         status "Building image '$target'"
         docker image build \
             --build-arg BUILDKIT_INLINE_CACHE=1 \
