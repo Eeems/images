@@ -54,10 +54,11 @@ docker-build(){
     target="$(image-name "$image" "$2")"
     status "Checking image '$target'"
     hash=$(md5sum Dockerfile)
-    if [[ "$(docker inspect "$target" 2> /dev/null)" == "[]" ]];then
-        echo "  Image missing"
+    
+    if ! docker pull "$target" &> /dev/null;then
+        echo "  Image missing or could not be downloaded"
         updates=1
-    elif [[ "$(docker run --pull=always "$target" cat /hash 2> /dev/null)" != "$hash" ]];then
+    elif [[ "$(docker run "$target" cat /hash 2> /dev/null)" != "$hash" ]];then
         echo "  Dockerfile changed"
         updates=1
     else
