@@ -5,7 +5,8 @@ usage="$0 [OPTION]... IMAGESDIR
 Build the Docker images under the IMAGESDIR directory.
 The build takes advantage of any reusable layer from previously built images.
 Options:
-    -h              Show this help message."
+    -h              Show this help message.
+    -v              set -x"
 
 helpflag=
 
@@ -21,9 +22,10 @@ image-name() {
 }
 
 
-while getopts hp name; do
+while getopts hv name; do
     case $name in
         h) helpflag=1 ;;
+        v) set -x ;;
         *) error "Invalid option. Use the -h flag for more information." ;;
     esac
 done
@@ -62,7 +64,7 @@ docker-build(){
         echo "  Dockerfile changed"
         updates=1
     else
-        output="$(docker run "$target" /usr/bin/checkupdates 2> /dev/null)"
+        output="$(docker run "$target" /usr/bin/checkupdates 2> /dev/null || true)"
         updates=$(echo "$updates" | awk NF | wc -l)
         if [ $updates != 0 ];then
             echo "  $updates updates detected:"
