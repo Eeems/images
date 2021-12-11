@@ -56,7 +56,7 @@ docker-build(){
     hash=$(md5sum Dockerfile)
     if [[ "$(docker inspect "$target" 2> /dev/null)" == "[]" ]];then
         echo "  Image missing"
-        updates = 1
+        updates=1
     elif [[ "$(docker run --pull=always "$target" cat /hash 2> /dev/null)" != "$hash" ]];then
         echo "  Dockerfile changed"
         updates=1
