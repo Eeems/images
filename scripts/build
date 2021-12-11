@@ -62,11 +62,11 @@ docker-build(){
         echo "  Dockerfile changed"
         updates=1
     else
-        output="$(docker run "$target" /usr/bin/checkupdates 2> /dev/null | sed 's/^/    /')"
-        updates=$(echo "$updates" | sed '/^ *$/d' | wc -l)
+        output="$(docker run "$target" /usr/bin/checkupdates 2> /dev/null | awk NF)"
+        updates=$(echo "$updates" | wc -l)
         if [ $updates != 0 ];then
             echo "  $updates updates detected:"
-            echo "$output"
+            echo "$($output | sed 's/^/    /')"
         fi
     fi
     if [ $updates != 0 ];then
@@ -87,16 +87,23 @@ docker-build(){
 pushd "$imagesdir" > /dev/null
 \ls | while read image;do
     pushd "$image" > /dev/null
-    pushd latest > /dev/null
-    docker-build "$image" latest
+    if [ -f .start ];then
+        start="$(cat .start | awk NF)"
+    fi
+    if ! [ -d "$start" ] || [[ "x$start" == "x" ]];then
+        start="latest"
+    fi
+    pushd $start > /dev/null
+    docker-build "$image" $start
     popd > /dev/null
     \ls | while read tag;do
-        if [[ "$tag" != "latest" ]];then
+        if [ -d "$tag" ] && [[ "$tag" != "$start" ]];then
             pushd "$tag" > /dev/null
             docker-build "$image" "$tag"
             popd > /dev/null
         fi
     done
+    unsert $start
     popd > /dev/null
 done
 popd > /dev/null
