@@ -62,9 +62,10 @@ docker-build(){
         echo "  Dockerfile changed"
         updates=1
     else
-        updates=$(docker run "$target" /usr/bin/checkupdates 2> /dev/null | wc -l)
+        updates=$(docker run "$target" /usr/bin/checkupdates 2> /dev/null)
         if [ $updates != 0 ];then
-            echo "  Updates detected"
+            echo "  $(echo "$updates" | wc -l) updates detected:"
+            echo "$updates" | sed 's/^/    /'
         fi
     fi
     if [ $updates != 0 ];then
