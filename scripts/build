@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 set -e
-usage="$0 [OPTION]... IMAGESDIR
-Build the Docker images under the IMAGESDIR directory.
+usage="$0 [OPTION]... IMAGESDIR [IMAGE] [TAG]
+Build the Docker images under the IMAGESDIR directory. Optionally only build one image or tag
 The build takes advantage of any reusable layer from previously built images.
 Options:
     -h              Show this help message.
@@ -41,7 +41,7 @@ if [[ $# -eq 0 ]]; then
     error "Missing IMAGESDIR arguments. Use the -h flag for more information."
 fi
 
-if [[ $# -gt 1 ]]; then
+if [[ $# -gt 3 ]]; then
     error "Extraneous arguments. Use the -h flag for more information."
 fi
 
@@ -51,12 +51,28 @@ imagesdir="$1"
 # See <https://docs.docker.com/engine/reference/builder/#buildkit>
 export DOCKER_BUILDKIT=1
 
-docker-build(){
-    image="$1"
+has-element() {
+    local needle="$1"
+    shift
+    for element; do
+        if [[ $needle == "$element" ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
+build-tag(){
+    local image="$1"
+    local tag="$2"
+    if ! [ -d "$tag" ];then
+        echo "$image:$tag not found"
+        return
+    fi
+    pushd $tag > /dev/null
     target="$(image-name "$image" "$2")"
     status "Checking image '$target'"
     hash=$(md5sum Dockerfile)
-    
+    local updates=0
     if ! docker pull "$target" &> /dev/null;then
         echo "  Image missing or could not be downloaded"
         updates=1
@@ -64,10 +80,10 @@ docker-build(){
         echo "  Dockerfile changed"
         updates=1
     else
-        output="$(docker run "$target" /usr/bin/checkupdates 2> /dev/null || true)"
-        updates=$(echo "$updates" | awk NF | wc -l)
+        local output="$(docker run "$target" /usr/bin/checkupdates 2> /dev/null || true)"
+        updates=$(echo "$output" | awk NF | wc -l)
         if [ $updates != 0 ];then
-            echo "  $updates updates detected:"
+            echo "  $updates update(s) detected:"
             echo "$($output | awk NF | sed 's/^/    /')"
         fi
     fi
@@ -84,30 +100,48 @@ docker-build(){
         rm .hash
         rm .tmp.dockerfile
     fi
+    popd > /dev/null
+}
+build-image(){
+    local start
+    local image="$1"
+    if ! [ -d "$image" ];then
+        echo "$image not found"
+        return
+    fi
+    pushd "$image" > /dev/null
+    if [[ $# -eq 1 ]];then
+        local order=(latest)
+        if [ -f .order ];then
+            readarray -t order < .order
+        fi
+        for tag in "${order[@]}";do
+            build-tag "$image" "$tag"
+        done
+        \ls | while read tag;do
+            if ! has-element "$tag" "${order[@]}";then
+                build-tag "$image" "$tag"
+            fi
+        done
+    else
+        build-tag "$image" "$2"
+    fi
+    popd > /dev/null
 }
 
 pushd "$imagesdir" > /dev/null
-\ls | while read image;do
-    pushd "$image" > /dev/null
-    if [ -f .start ];then
-        start="$(cat .start | awk NF)"
-    fi
-    if ! [ -d "$start" ] || [[ "x$start" == "x" ]];then
-        start="latest"
-    fi
-    pushd $start > /dev/null
-    docker-build "$image" $start
-    popd > /dev/null
-    \ls | while read tag;do
-        if [ -d "$tag" ] && [[ "$tag" != "$start" ]];then
-            pushd "$tag" > /dev/null
-            docker-build "$image" "$tag"
-            popd > /dev/null
-        fi
+if [[ $# -eq 1 ]]; then
+    \ls | while read image;do
+        build-image "$image"
     done
-    unsert $start
-    popd > /dev/null
-done
+elif [[ $# -eq 2 ]];then
+    build-image "$2"
+elif [[ $# -eq 3 ]];then
+    build-image "$2" "$3"
+else
+    echo "Unknown number of arguments"
+    echo "$usage"
+fi
 popd > /dev/null
 
 status "Done"
