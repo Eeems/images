@@ -84,7 +84,7 @@ build-tag(){
         updates=$(echo "$output" | awk NF | wc -l)
         if [ $updates != 0 ];then
             echo "  $updates update(s) detected:"
-            echo "$($output | awk NF | sed 's/^/    /')"
+            echo "$(echo $output | awk NF | sed 's/^/    /')"
         fi
     fi
     if [ $updates != 0 ];then
