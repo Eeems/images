@@ -20,6 +20,12 @@ status() {
 image-name() {
     echo "registry.eeems.codes/$1:${2:-latest}"
 }
+group(){
+    echo "::group::$1"
+}
+endgroup(){
+    echo "::endgroup::"
+}
 
 
 while getopts hv name; do
@@ -114,8 +120,10 @@ build-tag(){
 build-image(){
     local start
     local image="$1"
+    group "$image"
     if ! [ -d "$image" ];then
         echo "$image not found"
+        endgroup
         return
     fi
     pushd "$image" > /dev/null
@@ -136,6 +144,7 @@ build-image(){
         build-tag "$image" "$2"
     fi
     popd > /dev/null
+    endgroup
 }
 
 pushd "$imagesdir" > /dev/null
