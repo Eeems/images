@@ -80,11 +80,20 @@ build-tag(){
         echo "  Dockerfile changed"
         updates=1
     else
-        local output="$(docker run "$target" /usr/bin/checkupdates 2> /dev/null || true)"
-        updates=$(echo "$output" | awk NF | wc -l)
-        if [ $updates != 0 ];then
-            echo "  $updates update(s) detected:"
-            echo "$(echo -e "$output" | awk NF | sed 's/^/    /')"
+        local fromLine="$(head -n1 Dockerfile)"
+        if [[ "ARG FROM" != "$fromline" ]] && [[ FROM* == "$fromline" ]];then
+          fromLine="$(echo "$fromline" | awk '{$print $2}')"
+          if docker pull $fromLine | grep -q "Downloaded newer image";then
+            updates=1
+          fi
+        fi
+        if [ $updates -eq 0 ];then
+            local output="$(docker run "$target" /usr/bin/checkupdates 2> /dev/null || true)"
+            updates=$(echo "$output" | awk NF | wc -l)
+            if [ $updates != 0 ];then
+                echo "  $updates update(s) detected:"
+                echo "$(echo -e "$output" | awk NF | sed 's/^/    /')"
+            fi
         fi
     fi
     if [ $updates != 0 ];then
