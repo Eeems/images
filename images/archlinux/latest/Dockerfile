@@ -30,8 +30,8 @@ RUN sudo pacman-key --recv A64228CCD26972801C2CE6E3EC931EA46980BA1B --keyserver 
     echo '[multilib]' | sudo tee -a /etc/pacman.conf && \
     echo 'Include = /etc/pacman.d/mirrorlist' | sudo tee -a /etc/pacman.conf
 
-RUN sudo pacman -Syu --noconfirm && \
-    sudo pacman -S --noconfirm yay namcap git rsync openssh clang llvm && \
-    yay -S --noconfirm checkupdates+aur chronic
+RUN sudo pacman -Syu --noconfirm
+RUN sudo pacman -S --noconfirm yay namcap git rsync openssh clang llvm
+RUN yay -S --noconfirm checkupdates+aur chronic
 
 WORKDIR /pkg
