@@ -70,8 +70,10 @@ has-element() {
 build-tag(){
     local image="$1"
     local tag="$2"
+    group "$image:$tag"
     if ! [ -d "$tag" ];then
         echo "$image:$tag not found"
+        endgroup
         return
     fi
     pushd $tag > /dev/null
@@ -116,6 +118,7 @@ build-tag(){
         rm .tmp.dockerfile
     fi
     popd > /dev/null
+    endgroup
 }
 build-image(){
     local start
