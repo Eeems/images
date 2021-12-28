@@ -123,10 +123,8 @@ build-tag(){
 build-image(){
     local start
     local image="$1"
-    group "$image"
     if ! [ -d "$image" ];then
         echo "$image not found"
-        endgroup
         return
     fi
     pushd "$image" > /dev/null
@@ -147,7 +145,6 @@ build-image(){
         build-tag "$image" "$2"
     fi
     popd > /dev/null
-    endgroup
 }
 
 pushd "$imagesdir" > /dev/null
