@@ -89,6 +89,10 @@ build-tag(){
         updates=1
     else
         local fromLine="$(head -n1 Dockerfile)"
+        echo "$fromLine"
+        if [[ FROM* == "$fromLine" ]];then
+            echo "Starts with FROM"
+        fi
         if [[ "ARG FROM" != "$fromLine" ]] && [[ FROM* == "$fromLine" ]];then
           fromLine="$(echo "$fromLine" | awk '{$print $2}')"
           if docker pull $fromLine | grep -q "Downloaded newer image";then
