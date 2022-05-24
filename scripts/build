@@ -124,7 +124,7 @@ build-image(){
     local start
     local image="$1"
     if ! [ -d "$image" ];then
-        echo "$image not found"
+        echo "Folder $image not found"
         return
     fi
     pushd "$image" > /dev/null
