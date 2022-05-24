@@ -71,7 +71,8 @@ else
         $CONFIG_OPTS \
         --unattended
 fi
-nohup dockerd >/dev/null 2>&1 &
+sed -i 's|ulimit .*|true|' /etc/init.d/docker
+service docker start
 sleep 10
 
 exec "$@"
