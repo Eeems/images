@@ -73,7 +73,14 @@ else
 fi
 sed -i 's|ulimit .*|true|' /etc/init.d/docker
 iptables -F
-service docker start
-sleep 10
+(
+    while :
+    do
+        if ! service docker status > /dev/null;then
+            service docker start
+        fi
+        sleep 10
+    done
+) &
 
 exec "$@"
