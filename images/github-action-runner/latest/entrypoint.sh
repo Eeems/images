@@ -72,6 +72,7 @@ else
         --unattended
 fi
 sed -i 's|ulimit .*|true|' /etc/init.d/docker
+iptables -F
 service docker start
 sleep 10
 
