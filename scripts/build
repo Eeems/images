@@ -113,10 +113,10 @@ build-tag(){
             --build-arg FROM="$(image-name "$image" latest)" \
             --no-cache \
             --tag "$target" -f - .
-        docker image push "$target"
         rm .hash
         rm .tmp.dockerfile
     fi
+    docker image push "$target"
     popd > /dev/null
     endgroup
 }
