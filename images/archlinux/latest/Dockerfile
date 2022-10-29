@@ -31,7 +31,7 @@ RUN sudo pacman-key --recv A64228CCD26972801C2CE6E3EC931EA46980BA1B --keyserver 
     echo 'Server = https://repo.eeems.codes/$repo' | sudo tee -a /etc/pacman.conf && \
     echo '[multilib]' | sudo tee -a /etc/pacman.conf && \
     echo 'Include = /etc/pacman.d/mirrorlist' | sudo tee -a /etc/pacman.conf && \
-    echo 'SigLevel    = Required DatabaseOptional' | sudo tee -a /etc/pacman.conf && \
+    echo 'SigLevel    = Required DatabaseNever' | sudo tee -a /etc/pacman.conf && \
     sudo rm -R /var/lib/pacman/sync && \
     sudo pacman -Sy && \
     sudo paccache -rk 0
