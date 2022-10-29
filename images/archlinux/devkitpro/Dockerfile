@@ -8,6 +8,7 @@ RUN sudo pacman-key --init && \
     echo '[dkp-libs]' | sudo tee -a /etc/pacman.conf && \
     echo 'Server = https://devkitpro.eeems.codes/packages' | sudo tee -a /etc/pacman.conf && \
     echo '[dkp-linux]' | sudo tee -a /etc/pacman.conf && \
-    echo 'Server = https://devkitpro.eeems.codes/packages/linux/$arch/' | sudo tee -a /etc/pacman.conf
+    echo 'Server = https://devkitpro.eeems.codes/packages/linux/$arch/' | sudo tee -a /etc/pacman.conf && \
+    sudo pacman -Scc
 
-RUN yay -Syu --noconfirm
+RUN yay -Syu --noconfirm && sudo pacman -Scc
