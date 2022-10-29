@@ -9,6 +9,7 @@ RUN sudo pacman-key --init && \
     echo 'Server = https://devkitpro.eeems.codes/packages' | sudo tee -a /etc/pacman.conf && \
     echo '[dkp-linux]' | sudo tee -a /etc/pacman.conf && \
     echo 'Server = https://devkitpro.eeems.codes/packages/linux/$arch/' | sudo tee -a /etc/pacman.conf && \
-    sudo pacman -Scc
+    sudo pacman -Sy && \
+    sudo paccache -rk 0
 
-RUN yay -Syu --noconfirm && sudo pacman -Scc
+RUN yay -Su --noconfirm && sudo paccache -rk 0
