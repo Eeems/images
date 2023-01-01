@@ -2,13 +2,6 @@ FROM registry.eeems.codes/archlinux:base-devel
 
 # Force update on 2022-10-29
 
-RUN useradd -m notroot
-
-RUN echo "notroot ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/notroot
-
-USER notroot
-WORKDIR /home/notroot
-
 RUN mkdir .gnupg && \
     chmod 700 .gnupg && \
     touch .gnupg/gpg.conf && \
@@ -35,8 +28,8 @@ RUN sudo pacman-key --recv A64228CCD26972801C2CE6E3EC931EA46980BA1B --keyserver 
     sudo pacman -Sy && \
     sudo paccache -rk 0
 
-RUN sudo pacman -Su --noconfirm && sudo pacman -Scc --noconfirm
-RUN sudo pacman -S --noconfirm yay namcap git rsync openssh clang llvm && sudo pacman -Scc
-RUN yay -S --noconfirm checkupdates+aur chronic && sudo pacman -Scc
+RUN yay -Su --noconfirm && sudo pacman -Scc --noconfirm
+RUN yay -S --noconfirm namcap git rsync openssh clang llvm && sudo pacman -Scc --noconfirm
+RUN yay -S --noconfirm checkupdates+aur chronic && sudo pacman -Scc --noconfirm
 
 WORKDIR /pkg
