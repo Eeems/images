@@ -68,7 +68,7 @@ has-element() {
     return 1
 }
 push-mirror(){
-    docker tag "$1" "$2/$1"
+    docker tag "eeems/$1" "$2/$1"
     docker image push "$2/$1"
 }
 build-tag(){
@@ -85,10 +85,10 @@ build-tag(){
     status "Checking image '$target'"
     local hash=$(md5sum Dockerfile)
     local updates=0
-    if ! docker pull "$target" &> /dev/null;then
+    if ! docker pull "eeems/$target" &> /dev/null;then
         echo "  Image missing or could not be downloaded"
         updates=1
-    elif [[ "$(docker run "$target" cat /hash 2> /dev/null)" != "$hash" ]];then
+    elif [[ "$(docker run "eeems/$target" cat /hash 2> /dev/null)" != "$hash" ]];then
         echo "  Dockerfile changed"
         updates=1
     else
@@ -96,11 +96,12 @@ build-tag(){
         if [[ "ARG FROM" != "$fromLine" ]] && [[ "FROM" == "$(echo "$fromLine" | awk '{print $1}')" ]];then
           fromLine="$(echo "$fromLine" | awk '{print $2}')"
           if docker pull "${fromLine//$'\r'/}" | grep -q "Downloaded newer image";then
+            echo "  New base image"
             updates=1
           fi
         fi
         if [ $updates -eq 0 ];then
-            local output="$(docker run "$target" /usr/bin/checkupdates 2> /dev/null || true)"
+            local output="$(docker run "eeems/$target" /usr/bin/checkupdates 2> /dev/null || true)"
             updates=$(echo "$output" | awk NF | wc -l)
             if [ $updates != 0 ];then
                 echo "  $updates update(s) detected:"
@@ -116,11 +117,11 @@ build-tag(){
             --build-arg BUILDKIT_INLINE_CACHE=1 \
             --build-arg FROM="$(image-name "$image" latest)" \
             --no-cache \
-            --tag "$target" -f - .
+            --tag "eeems/$target" -f - .
         rm .hash
         rm .tmp.dockerfile
     fi
-    push-mirror "$target" "eeems"
+    docker image push "eeems/$target"
     push-mirror "$target" "registry.eeems.codes"
     popd > /dev/null
     endgroup
@@ -142,7 +143,7 @@ build-image(){
             build-tag "$image" "$tag"
         done
         \ls | while read tag;do
-            if ! has-element "$tag" "${order[@]}";then
+            if [ -d "$tag" ] && ! has-element "$tag" "${order[@]}";then
                 build-tag "$image" "$tag"
             fi
         done
