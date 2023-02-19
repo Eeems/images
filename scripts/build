@@ -68,8 +68,8 @@ has-element() {
     return 1
 }
 push-mirror(){
-    docker tag "eeems/$1" "$2/$1"
-    docker image push "$2/$1"
+    chronic docker tag "eeems/$1" "$2/$1"
+    chronic docker image push "$2/$1"
 }
 build-tag(){
     local image="$1"
@@ -121,7 +121,7 @@ build-tag(){
         rm .hash
         rm .tmp.dockerfile
     fi
-    docker image push "eeems/$target"
+    chronic docker image push "eeems/$target"
     push-mirror "$target" "registry.eeems.codes"
     popd > /dev/null
     endgroup

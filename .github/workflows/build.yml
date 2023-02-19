@@ -29,6 +29,12 @@ jobs:
               with:
                   username: eeems
                   password: ${{ secrets.DOCKER_AT }}
+            - name: Install chronic
+              id: cache-apt
+              uses: awalsh128/cache-apt-pkgs-action@latest
+              with:
+                packages: moreutils
+                version: 1.0
             - name: Build and publish images
               run: |
                 docker system prune --force
