@@ -6,9 +6,12 @@ Build the Docker images under the IMAGESDIR directory. Optionally only build one
 The build takes advantage of any reusable layer from previously built images.
 Options:
     -h              Show this help message.
+    -f              Force rebuild
     -v              set -x"
 
 helpflag=
+forceflag=
+ghaflag=
 
 error() {
     echo "Error: $1" >&2
@@ -21,16 +24,22 @@ image-name() {
     echo "$1:${2:-latest}"
 }
 group(){
-    echo "::group::$1"
+    if [[ -n $ghaflag ]];then
+        echo "::group::$1"
+    fi
 }
 endgroup(){
-    echo "::endgroup::"
+    if [[ -n $ghaflag ]];then
+        echo "::endgroup::"
+    fi
 }
 
 
-while getopts hv name; do
+while getopts hfv name; do
     case $name in
         h) helpflag=1 ;;
+        f) forceflag=1 ;;
+        g) ghaflag=1 ;;
         v) set -x ;;
         *) error "Invalid option. Use the -h flag for more information." ;;
     esac
@@ -53,10 +62,6 @@ fi
 
 imagesdir="$1"
 
-# Enable BuildKit for better cache behavior
-# See <https://docs.docker.com/engine/reference/builder/#buildkit>
-export DOCKER_BUILDKIT=1
-
 has-element() {
     local needle="$1"
     shift
@@ -68,8 +73,9 @@ has-element() {
     return 1
 }
 push-mirror(){
+    echo "Pushing to $2/$1"
     chronic docker tag "eeems/$1" "$2/$1"
-    chronic docker image push "$2/$1"
+    docker image push "$2/$1"
 }
 build-tag(){
     local image="$1"
@@ -85,7 +91,10 @@ build-tag(){
     status "Checking image '$target'"
     local hash=$(md5sum Dockerfile)
     local updates=0
-    if ! docker pull "eeems/$target" &> /dev/null;then
+    if [[ -n $forceflag ]];then
+        echo "  Force rebuild"
+        updates=1
+    elif ! docker pull "eeems/$target" &> /dev/null;then
         echo "  Image missing or could not be downloaded"
         updates=1
     elif [[ "$(docker run "eeems/$target" cat /hash 2> /dev/null)" != "$hash" ]];then
@@ -112,17 +121,19 @@ build-tag(){
     if [ $updates != 0 ];then
         status "Building image '$target'"
         echo "$hash" > .hash
-        echo "COPY .hash /hash" > .tmp.dockerfile
-        cat Dockerfile .tmp.dockerfile | docker image build \
+        cp Dockerfile .tmp.dockerfile
+        echo "COPY .hash /hash" >> .tmp.dockerfile
+        docker buildx build \
             --build-arg BUILDKIT_INLINE_CACHE=1 \
             --build-arg FROM="$(image-name "$image" latest)" \
             --no-cache \
-            --tag "eeems/$target" -f - .
+            --output "type=registry,name=eeems/$target" \
+            --tag "eeems/$target" \
+            --file .tmp.dockerfile $(pwd)
         rm .hash
         rm .tmp.dockerfile
+        push-mirror "$target" "registry.eeems.codes"
     fi
-    chronic docker image push "eeems/$target"
-    push-mirror "$target" "registry.eeems.codes"
     popd > /dev/null
     endgroup
 }

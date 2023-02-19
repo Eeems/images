@@ -38,5 +38,5 @@ jobs:
             - name: Build and publish images
               run: |
                 docker system prune --force
-                ./scripts/build images
+                ./scripts/build -g images
                 docker system prune --force

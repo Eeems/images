@@ -10,7 +10,7 @@ WORKDIR /home/notroot
 RUN sudo pacman-key --init
 RUN sudo pacman -Syu --noconfirm && \
     sudo pacman -S --needed --noconfirm git base-devel pacman-contrib && \
-    git clone https://aur.archlinux.org/yay-bin.git && \
+    git clone https://aur.archlinux.org/yay-bin.git --depth=1 && \
     cd yay-bin && \
     makepkg -si --noconfirm && \
     cd .. && \
