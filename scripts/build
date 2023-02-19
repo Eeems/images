@@ -18,7 +18,7 @@ status() {
     echo "=> $1" >&2
 }
 image-name() {
-    echo "registry.eeems.codes/$1:${2:-latest}"
+    echo "$1:${2:-latest}"
 }
 group(){
     echo "::group::$1"
@@ -67,6 +67,10 @@ has-element() {
     done
     return 1
 }
+push-mirror(){
+    docker tag "$1" "$2/$1"
+    docker image push "$2/$1"
+}
 build-tag(){
     local image="$1"
     local tag="$2"
@@ -77,9 +81,9 @@ build-tag(){
         return
     fi
     pushd $tag > /dev/null
-    target="$(image-name "$image" "$2")"
+    local target="$(image-name "$image" "$2")"
     status "Checking image '$target'"
-    hash=$(md5sum Dockerfile)
+    local hash=$(md5sum Dockerfile)
     local updates=0
     if ! docker pull "$target" &> /dev/null;then
         echo "  Image missing or could not be downloaded"
@@ -116,7 +120,8 @@ build-tag(){
         rm .hash
         rm .tmp.dockerfile
     fi
-    docker image push "$target"
+    push-mirror "$target" "eeems"
+    push-mirror "$target" "registry.eeems.codes"
     popd > /dev/null
     endgroup
 }

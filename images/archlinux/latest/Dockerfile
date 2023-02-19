@@ -1,4 +1,4 @@
-FROM registry.eeems.codes/archlinux:base-devel
+FROM eeems/archlinux:base-devel
 
 # Force update on 2022-10-29
 
