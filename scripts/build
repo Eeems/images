@@ -127,12 +127,16 @@ build-tag(){
         echo "COPY .hash /hash" >> .tmp.dockerfile
         local cacheflag="--no-cache"
         if [ $updates != 0 ];then
-            cacheflag="--cache-from $target"
+            if [ -n $ghaflag ];then
+                cacheflag="--cache-from type=gha"
+            else
+                cacheflag="--cache-from $target"
+            fi;
             echo "# $(date)" >> .tmp.dockerfile
             echo "RUN yay -Syu --noconfirm && yay -Scc --noconfirm && paccache -rk 0" >> .tmp.dockerfile
         fi
         if [ -n $ghaflag ];then
-            cacheflag="$cacheflag --cache-from type=gha --cache-to type=gha"
+            cacheflag="$cacheflag --cache-to type=gha"
         fi
         docker buildx build \
             --build-arg BUILDKIT_INLINE_CACHE=1 \
