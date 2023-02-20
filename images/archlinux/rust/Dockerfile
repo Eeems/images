@@ -1,5 +1,7 @@
 ARG FROM
 FROM $FROM
 
-RUN yay -Syu --noconfirm && sudo paccache -rk 0
-RUN yay -S --noconfirm rust && sudo paccache -rk 0
+RUN yay -Syu --noconfirm && \
+    yay -S --noconfirm rust && \
+    yay -Scc --noconfirm && \
+    sudo paccache -rk 0

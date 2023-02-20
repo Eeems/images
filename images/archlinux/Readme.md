@@ -27,7 +27,6 @@ The following pacman repos have been added:
 
 The following packages have been installed:
  - namcap
- - git
  - rsync
  - openssh
  - clang
@@ -46,10 +45,7 @@ The following pacman repos have been added:
 gnome
 -----
 
-The following packages have been installed:
- - gnome-shell
- - git
- - make
+The gnome-shell package has been installed.
 
 rust
 ----
@@ -69,7 +65,4 @@ The following packages have been nstalled:
 wayland
 -------
 
-The following packages have been installed
- - wayland
- - git
- - make
+The wayland package has been installed.

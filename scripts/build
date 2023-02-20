@@ -72,102 +72,114 @@ has-element() {
     done
     return 1
 }
-push-mirror(){
-    echo "Pushing to $2/$1"
-    chronic docker tag "eeems/$1" "$2/$1"
-    docker image push "$2/$1"
-}
 build-tag(){
-    local image="$1"
+    local name="$1"
     local tag="$2"
-    group "$image:$tag"
+    group "$name:$tag"
     if ! [ -d "$tag" ];then
-        echo "Folder $image/$tag not found"
+        echo "Folder $name/$tag not found"
         endgroup
         return
     fi
     pushd $tag > /dev/null
-    local target="$(image-name "$image" "$2")"
-    status "Checking image '$target'"
+    local image="$(image-name "$name" "$2")"
+    local target="eeems/$image"
+    status "Checking image '$image'"
     local hash=$(md5sum Dockerfile)
     local updates=0
+    local build=0
     if [[ -n $forceflag ]];then
         echo "  Force rebuild"
-        updates=1
-    elif ! docker pull "eeems/$target" &> /dev/null;then
+        build=1
+    elif ! docker pull "$target" &> /dev/null;then
         echo "  Image missing or could not be downloaded"
-        updates=1
-    elif [[ "$(docker run "eeems/$target" cat /hash 2> /dev/null)" != "$hash" ]];then
+        build=1
+    elif [[ "$(docker run "$target" cat /hash 2> /dev/null)" != "$hash" ]];then
         echo "  Dockerfile changed"
-        updates=1
+        build=1
     else
         local fromLine="$(head -n1 Dockerfile)"
         if [[ "ARG FROM" != "$fromLine" ]] && [[ "FROM" == "$(echo "$fromLine" | awk '{print $1}')" ]];then
           fromLine="$(echo "$fromLine" | awk '{print $2}')"
           if docker pull "${fromLine//$'\r'/}" | grep -q "Downloaded newer image";then
             echo "  New base image"
-            updates=1
+            build=1
           fi
         fi
-        if [ $updates -eq 0 ];then
-            local output="$(docker run "eeems/$target" /usr/bin/checkupdates 2> /dev/null || true)"
+        if [ $build -eq 0 ];then
+            local output="$(docker run "$target" /usr/bin/checkupdates 2> /dev/null || true)"
             updates=$(echo "$output" | awk NF | wc -l)
             if [ $updates != 0 ];then
+                build=1
                 echo "  $updates update(s) detected:"
                 echo "$(echo -e "$output" | awk NF | sed 's/^/    /')"
             fi
         fi
     fi
-    if [ $updates != 0 ];then
-        status "Building image '$target'"
+    if [[ "$tag" == "wayland" ]];then
+        updates=0
+        build=1
+    fi
+    if [ $build != 0 ];then
+        status "Building image '$image'"
         echo "$hash" > .hash
-        cp Dockerfile .tmp.dockerfile
+        cat Dockerfile > .tmp.dockerfile
         echo "COPY .hash /hash" >> .tmp.dockerfile
+        local cacheflag="--no-cache"
+        if [ $updates != 0 ];then
+            cacheflag="--cache-from $target"
+            echo "# $(date)" >> .tmp.dockerfile
+            echo "RUN yay -Syu --noconfirm && yay -Scc --noconfirm && paccache -rk 0" >> .tmp.dockerfile
+        fi
+        if [ -n $ghaflag ];then
+            cacheflag="$cacheflag --cache-from type=gha --cache-to type=gha"
+        fi
         docker buildx build \
             --build-arg BUILDKIT_INLINE_CACHE=1 \
-            --build-arg FROM="$(image-name "$image" latest)" \
-            --no-cache \
-            --output "type=registry,name=eeems/$target" \
-            --tag "eeems/$target" \
+            --build-arg FROM="eeems/$(image-name "$name" latest)" \
+            $cacheflag \
+            --cache-to "type=registry,ref=$target" \
+            --cache-to "type=registry,ref=registry.eeems.codes/$image" \
+            --load \
+            --tag "$target" \
             --file .tmp.dockerfile $(pwd)
         rm .hash
         rm .tmp.dockerfile
-        push-mirror "$target" "registry.eeems.codes"
     fi
     popd > /dev/null
     endgroup
 }
 build-image(){
     local start
-    local image="$1"
-    if ! [ -d "$image" ];then
-        echo "Folder $image not found"
+    local name="$1"
+    if ! [ -d "$name" ];then
+        echo "Folder $name not found"
         return
     fi
-    pushd "$image" > /dev/null
+    pushd "$name" > /dev/null
     if [[ $# -eq 1 ]];then
         local order=(latest)
         if [ -f .order ];then
             readarray -t order < .order
         fi
         for tag in "${order[@]}";do
-            build-tag "$image" "$tag"
+            build-tag "$name" "$tag"
         done
         \ls | while read tag;do
             if [ -d "$tag" ] && ! has-element "$tag" "${order[@]}";then
-                build-tag "$image" "$tag"
+                build-tag "$name" "$tag"
             fi
         done
     else
-        build-tag "$image" "$2"
+        build-tag "$name" "$2"
     fi
     popd > /dev/null
 }
 
 pushd "$imagesdir" > /dev/null
 if [[ $# -eq 1 ]]; then
-    \ls | while read image;do
-        build-image "$image"
+    \ls | while read name;do
+        build-image "$name"
     done
 elif [[ $# -eq 2 ]];then
     build-image "$2"
