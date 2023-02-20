@@ -116,10 +116,6 @@ build-tag(){
             fi
         fi
     fi
-    if [[ "$tag" == "wayland" ]];then
-        updates=0
-        build=1
-    fi
     if [ $build != 0 ];then
         status "Building image '$image'"
         echo "$hash" > .hash
