@@ -35,7 +35,7 @@ endgroup(){
 }
 
 
-while getopts hfv name; do
+while getopts hgfv name; do
     case $name in
         h) helpflag=1 ;;
         f) forceflag=1 ;;
