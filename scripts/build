@@ -87,65 +87,67 @@ build-tag(){
     status "Checking image '$image'"
     local hash=$(md5sum Dockerfile)
     local updates=0
-    local build=0
+    local rebuild=0
+    local latest="eeems/$(image-name "$name" latest)"
+    local from=$latest
+    local fromLine="$(head -n1 Dockerfile)"
+    if [[ "ARG FROM" != "$fromLine" ]] && [[ "FROM" == "$(echo "$fromLine" | awk '{print $1}')" ]];then
+      fromLine="$(echo "$fromLine" | awk '{print $2}')"
+      from="${fromLine//$'\r'/}"
+    fi
     if [[ -n $forceflag ]];then
         echo "  Force rebuild"
-        build=1
+        rebuild=1
     elif ! docker pull "$target" &> /dev/null;then
         echo "  Image missing or could not be downloaded"
-        build=1
     elif [[ "$(docker run "$target" cat /hash 2> /dev/null)" != "$hash" ]];then
         echo "  Dockerfile changed"
-        build=1
+        rebuild=1
     else
-        local fromLine="$(head -n1 Dockerfile)"
-        if [[ "ARG FROM" != "$fromLine" ]] && [[ "FROM" == "$(echo "$fromLine" | awk '{print $1}')" ]];then
-          fromLine="$(echo "$fromLine" | awk '{print $2}')"
-          if docker pull "${fromLine//$'\r'/}" | grep -q "Downloaded newer image";then
+        if [[ "$from" != "$latest" ]] && docker pull "$from" | grep -q "Downloaded newer image";then
             echo "  New base image"
-            build=1
-          fi
+            rebuild=1
         fi
-        if [ $build -eq 0 ];then
+        if [ $rebuild -eq 0 ];then
             local output="$(docker run "$target" /usr/bin/checkupdates 2> /dev/null || true)"
             updates=$(echo "$output" | awk NF | wc -l)
             if [ $updates != 0 ];then
-                build=1
                 echo "  $updates update(s) detected:"
                 echo "$(echo -e "$output" | awk NF | sed 's/^/    /')"
             fi
         fi
     fi
-    if [ $build != 0 ];then
-        status "Building image '$image'"
-        echo "$hash" > .hash
-        cat Dockerfile > .tmp.dockerfile
-        echo "COPY .hash /hash" >> .tmp.dockerfile
-        local cacheflag="--no-cache"
-        if [ $updates != 0 ];then
-            if [ -n $ghaflag ];then
-                cacheflag="--cache-from type=gha"
-            else
-                cacheflag="--cache-from $target"
-            fi;
-            echo "# $(date)" >> .tmp.dockerfile
-            echo "RUN yay -Syu --noconfirm && yay -Scc --noconfirm && paccache -rk 0" >> .tmp.dockerfile
-        fi
+    status "Building image '$image'"
+    echo "$hash" > .hash
+    cat Dockerfile > .tmp.dockerfile
+    echo "COPY .hash /hash" >> .tmp.dockerfile
+    local cacheflags=
+    if [ $rebuild != 0 ];then
+        cacheflags="--no-cache"
+    else
+        cacheflags="--cache-from $from"
         if [ -n $ghaflag ];then
-            cacheflag="$cacheflag --cache-to type=gha"
+            cacheflags="$cacheflags --cache-from type=gha"
         fi
-        docker buildx build \
-            --build-arg BUILDKIT_INLINE_CACHE=1 \
-            --build-arg FROM="eeems/$(image-name "$name" latest)" \
-            $cacheflag \
-            --cache-to "type=registry,ref=$target" \
-            --cache-to "type=registry,ref=registry.eeems.codes/$image" \
-            --load \
-            --tag "$target" \
-            --file .tmp.dockerfile $(pwd)
-        rm .hash
-        rm .tmp.dockerfile
     fi
+    if [ -n $ghaflag ];then
+        cacheflags="$cacheflags --cache-to type=gha"
+    fi
+    if [ $rebuild == 0 ] && [ $updates != 0 ];then
+        echo "# $(date)" >> .tmp.dockerfile
+        echo "RUN yay -Syu --noconfirm && yay -Scc --noconfirm && paccache -rk 0" >> .tmp.dockerfile
+    fi
+    docker buildx build \
+        --build-arg BUILDKIT_INLINE_CACHE=1 \
+        --build-arg "FROM=$from" \
+        $cacheflags \
+        --load \
+        --file .tmp.dockerfile $(pwd)
+    rm .hash
+    rm .tmp.dockerfile
+    docker push $target
+    docker tag $target "registry.eeems.codes/$image"
+    docker push "registry.eeems.codes/$image"
     popd > /dev/null
     endgroup
 }

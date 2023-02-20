@@ -10,6 +10,8 @@ RUN mkdir .gnupg && \
     sudo curl --header 'Host: repo.eeems.codes' https://repo.eeems.codes/eeems-keyring.tar.zst --output eeems-keyring.tar.zst && \
     sudo pacman -U --noconfirm ./eeems-keyring.tar.zst && \
     sudo rm eeems-keyring.tar.zst && \
+    sudo sed -i 's|^\(SyncFirst    =.*\)$|\1 eeems-keyring|' /etc/pacman.conf && \
+    sudo sed -i 's|^\#\(ParallelDownloads = .*\)$|\1|' /etc/pacman.conf && \
     echo '[eeems-3ds]' | sudo tee -a /etc/pacman.conf && \
     echo 'Server = https://repo.eeems.website/$repo' | sudo tee -a /etc/pacman.conf && \
     echo 'Server = https://repo.eeems.codes/$repo' | sudo tee -a /etc/pacman.conf && \

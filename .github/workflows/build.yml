@@ -38,6 +38,5 @@ jobs:
             - name: Build and publish images
               run: |
                 docker system prune --force
-                docker buildx create --use
                 ./scripts/build -g images
                 docker system prune --force
