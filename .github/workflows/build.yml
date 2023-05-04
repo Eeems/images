@@ -22,7 +22,7 @@ jobs:
         id: images-matrix
         run: |
           echo 'JSON_CONTENT<<EOF' >> $GITHUB_OUTPUT
-          jq -cn '[reduce ($ARGS.positional[] / "/") as [$k, $v] (.; . += ["\($k)"]) | .[] | {image: .}]' --args $(\ls images) >> $GITHUB_OUTPUT
+          jq -cn '{"include": [reduce ($ARGS.positional[] / "/") as [$k, $v] (.; . += ["\($k)"]) | .[] | {image: .}]}' --args $(\ls images) >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
   build:
     name: Publish ${{ matrix.image }}
@@ -54,7 +54,7 @@ jobs:
           version: 1.0
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      - name: Build and publish images
+      - name: Build and publish ${{ matrix.image }}
         run: |
           docker system prune --force
           ./scripts/build -g images ${{ matrix.image }}
