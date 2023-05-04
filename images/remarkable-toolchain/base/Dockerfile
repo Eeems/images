@@ -8,6 +8,8 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get dist-upgrade -y
 RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y \
   curl \
   build-essential \
-  gcc-arm-linux-gnueabihf
+  gcc-arm-linux-gnueabihf \
+  python3 \
+  file
 
 COPY --link checkupdates /usr/bin/checkupdates
