@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM remarkable-toolchain:base
 LABEL maintainer='Nathaniel van Diepen'
 
 WORKDIR /root
