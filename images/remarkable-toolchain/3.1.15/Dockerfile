@@ -1,4 +1,4 @@
-FROM remarkable-toolchain:base
+FROM eeems/remarkable-toolchain:base
 
 RUN curl https://cloudflare-ipfs.com/ipfs/Qmdw66tZo2ZPRqicK4dtiUUskdHnDFZNpRAKBS5iYKKDTw -o install-toolchain.sh && \
   chmod +x install-toolchain.sh && \
