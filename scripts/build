@@ -104,7 +104,7 @@ build-tag(){
         echo "  Dockerfile changed"
         rebuild=1
     else
-        if [[ "$from" != "$latest" ]] && docker pull "$from" | grep -q "Downloaded newer image";then
+        if [[ "$from" != "eeems/$name:"* ]] && docker pull "$from" | grep -q "Downloaded newer image";then
             echo "  New base image"
             rebuild=1
         fi
