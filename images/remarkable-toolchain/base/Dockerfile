@@ -6,11 +6,14 @@ WORKDIR /root
 RUN apt-get update && \
   DEBIAN_FRONTEND="noninteractive" apt-get dist-upgrade -y && \
   DEBIAN_FRONTEND="noninteractive" apt-get install -y \
-    curl \
+    bc \
     build-essential \
+    curl \
+    file \
     gcc-arm-linux-gnueabihf \
-    python3 \
-    file && \
+    git \
+    libssl-dev \
+    python3 &&\
   rm -rf /var/lib/apt/lists/*
 
 COPY --link checkupdates /usr/bin/checkupdates
