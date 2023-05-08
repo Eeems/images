@@ -13,6 +13,7 @@ RUN apt-get update && \
     gcc-arm-linux-gnueabihf \
     git \
     libssl-dev \
+    lzop \
     python3 &&\
   rm -rf /var/lib/apt/lists/*
 
