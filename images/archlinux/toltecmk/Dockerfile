@@ -4,4 +4,5 @@ FROM $FROM
 RUN yay -Syu --noconfirm && \
     yay -S --noconfirm python python-pip python-virtualenv ccache scons && \
     yay -Scc --noconfirm && \
-    sudo paccache -rk 0
+    sudo paccache -rk 0 && \
+    pip install toltecmk
