@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+yay -Syu --noconfirm
+yay -Scc --noconfirm
+paccache -rk 0

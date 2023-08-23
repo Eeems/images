@@ -18,3 +18,4 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 COPY --link checkupdates /usr/bin/checkupdates
+COPY --link update /usr/local/bin/update

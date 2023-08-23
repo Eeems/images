@@ -135,7 +135,7 @@ build-tag(){
     fi
     if [ $rebuild == 0 ] && [ $updates != 0 ];then
         echo "# $(date)" >> .tmp.dockerfile
-        echo "RUN yay -Syu --noconfirm && yay -Scc --noconfirm && paccache -rk 0" >> .tmp.dockerfile
+        echo "RUN /usr/local/bin/update" >> .tmp.dockerfile
     fi
     docker buildx build \
         --build-arg BUILDKIT_INLINE_CACHE=1 \

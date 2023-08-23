@@ -16,3 +16,5 @@ RUN sudo pacman-key --init && \
     rm -rf yay-bin && \
     sudo pacman -Scc --noconfirm && \
     sudo paccache -rk 0
+
+COPY --link update /usr/local/bin/update
