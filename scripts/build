@@ -5,13 +5,16 @@ usage="$0 [OPTION]... IMAGESDIR [IMAGE] [TAG]
 Build the Docker images under the IMAGESDIR directory. Optionally only build one image or tag
 The build takes advantage of any reusable layer from previously built images.
 Options:
-    -h              Show this help message.
+    -h              Show this help message
     -f              Force rebuild
-    -v              set -x"
+    -v              set -x
+    -p              Prune between each build
+    -g              Use github actions cache"
 
 helpflag=
 forceflag=
 ghaflag=
+pruneflag=
 
 error() {
     echo "Error: $1" >&2
@@ -35,11 +38,12 @@ endgroup(){
 }
 
 
-while getopts hgfv name; do
+while getopts hgfpv name; do
     case $name in
         h) helpflag=1 ;;
         f) forceflag=1 ;;
         g) ghaflag=1 ;;
+        p) pruneflag=1 ;;
         v) set -x ;;
         *) error "Invalid option. Use the -h flag for more information." ;;
     esac
@@ -149,6 +153,9 @@ build-tag(){
     docker push $target
     docker tag $target "registry.eeems.codes/$image"
     docker push "registry.eeems.codes/$image"
+    if [ -n $pruneflag ];then
+        docker system prune -f
+    fi
     popd > /dev/null
     endgroup
 }
