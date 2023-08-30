@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-reflector --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
+sudo reflector --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
 yay -Syu --noconfirm
 yay -Scc --noconfirm
 paccache -rk 0
