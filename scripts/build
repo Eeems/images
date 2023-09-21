@@ -153,6 +153,10 @@ build-tag(){
     docker push $target
     docker tag $target "registry.eeems.codes/$image"
     docker push "registry.eeems.codes/$image"
+    if [[ "x$(grep removeafterpush ../.config 2> /dev/null)" == "x" ]];then
+        docker rmi $target
+        docker rmi "registry.eeems.codes/$image"
+    fi
     if [ -n $pruneflag ];then
         docker system prune -f
     fi
