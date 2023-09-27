@@ -121,38 +121,42 @@ build-tag(){
             fi
         fi
     fi
-    status "Building image '$image'"
-    echo "$hash" > .hash
-    cat Dockerfile > .tmp.dockerfile
-    echo "COPY .hash /hash" >> .tmp.dockerfile
-    local cacheflags=
-    if [ $rebuild != 0 ];then
-        cacheflags="--no-cache"
-    else
-        cacheflags="--cache-from $from"
-        if [ -n $ghaflag ];then
-            cacheflags="$cacheflags --cache-from type=gha"
+    if [ $rebuild -neq 0 ] || [ $updates != 0 ] || docker manifest inspect $target > /dev/null || docker manifest inspect "registry.eeems.codes/$image" > /dev/null;then
+        status "Building image '$image'"
+        echo "$hash" > .hash
+        cat Dockerfile > .tmp.dockerfile
+        echo "COPY .hash /hash" >> .tmp.dockerfile
+        local cacheflags=
+        if [ $rebuild != 0 ];then
+            cacheflags="--no-cache"
+        else
+            cacheflags="--cache-from $from"
+            if [ -n $ghaflag ];then
+                cacheflags="$cacheflags --cache-from type=gha"
+            fi
         fi
+        if [ -n $ghaflag ];then
+            cacheflags="$cacheflags --cache-to type=gha"
+        fi
+        if [ $rebuild == 0 ] && [ $updates != 0 ];then
+            echo "# $(date)" >> .tmp.dockerfile
+            echo "RUN /usr/local/bin/update" >> .tmp.dockerfile
+        fi
+        docker buildx build \
+            --build-arg BUILDKIT_INLINE_CACHE=1 \
+            --build-arg "FROM=$from" \
+            $cacheflags \
+            --load \
+            --tag $target \
+            --file .tmp.dockerfile $(pwd)
+        rm .hash
+        rm .tmp.dockerfile
+        docker push $target
+        docker tag $target "registry.eeems.codes/$image"
+        docker push "registry.eeems.codes/$image"
+    else
+        echo "Skipping image '$image'";
     fi
-    if [ -n $ghaflag ];then
-        cacheflags="$cacheflags --cache-to type=gha"
-    fi
-    if [ $rebuild == 0 ] && [ $updates != 0 ];then
-        echo "# $(date)" >> .tmp.dockerfile
-        echo "RUN /usr/local/bin/update" >> .tmp.dockerfile
-    fi
-    docker buildx build \
-        --build-arg BUILDKIT_INLINE_CACHE=1 \
-        --build-arg "FROM=$from" \
-        $cacheflags \
-        --load \
-        --tag $target \
-        --file .tmp.dockerfile $(pwd)
-    rm .hash
-    rm .tmp.dockerfile
-    docker push $target
-    docker tag $target "registry.eeems.codes/$image"
-    docker push "registry.eeems.codes/$image"
     if [[ "x$(grep removeafterpush ../.config 2> /dev/null)" == "x" ]];then
         docker rmi $target
         docker rmi "registry.eeems.codes/$image"
