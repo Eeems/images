@@ -121,7 +121,7 @@ build-tag(){
             fi
         fi
     fi
-    if [ $rebuild -neq 0 ] || [ $updates != 0 ] || docker manifest inspect $target > /dev/null || docker manifest inspect "registry.eeems.codes/$image" > /dev/null;then
+    if [ $rebuild != 0 ] || [ $updates != 0 ] || docker manifest inspect $target > /dev/null || docker manifest inspect "registry.eeems.codes/$image" > /dev/null;then
         status "Building image '$image'"
         echo "$hash" > .hash
         cat Dockerfile > .tmp.dockerfile
