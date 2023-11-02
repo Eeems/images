@@ -12,13 +12,16 @@ RUN mkdir .gnupg && \
     sudo rm eeems-keyring.tar.zst && \
     sudo sed -i 's|^\(SyncFirst    =.*\)$|\1 eeems-keyring|' /etc/pacman.conf && \
     sudo sed -i 's|^\#\(ParallelDownloads = .*\)$|\1|' /etc/pacman.conf && \
-    echo '[eeems-3ds]' | sudo tee -a /etc/pacman.conf && \
+    echo '[eeems-calc]' | sudo tee -a /etc/pacman.conf && \
     echo 'Server = https://repo.eeems.website/$repo' | sudo tee -a /etc/pacman.conf && \
     echo 'Server = https://repo.eeems.codes/$repo' | sudo tee -a /etc/pacman.conf && \
     echo '[eeems-linux]' | sudo tee -a /etc/pacman.conf && \
     echo 'Server = https://repo.eeems.website/$repo' | sudo tee -a /etc/pacman.conf && \
     echo 'Server = https://repo.eeems.codes/$repo' | sudo tee -a /etc/pacman.conf && \
     echo '[eeems-multilib]' | sudo tee -a /etc/pacman.conf && \
+    echo 'Server = https://repo.eeems.website/$repo' | sudo tee -a /etc/pacman.conf && \
+    echo 'Server = https://repo.eeems.codes/$repo' | sudo tee -a /etc/pacman.conf && \
+    echo '[eeems-system76]' | sudo tee -a /etc/pacman.conf && \
     echo 'Server = https://repo.eeems.website/$repo' | sudo tee -a /etc/pacman.conf && \
     echo 'Server = https://repo.eeems.codes/$repo' | sudo tee -a /etc/pacman.conf && \
     echo '[multilib]' | sudo tee -a /etc/pacman.conf && \
