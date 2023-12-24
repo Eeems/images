@@ -1,4 +1,4 @@
 #syntax=docker/dockerfile:1.4
 FROM eeems/nuitka-arm-builder:bullseye-base
 
-RUN /opt/setup.sh 3.12
+RUN /opt/bin/setup.sh 3.12
