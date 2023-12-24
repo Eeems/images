@@ -173,7 +173,7 @@ build-tag(){
     else
         echo "Skipping image '$image'";
     fi
-    if ! grep -q removeafterpush ../.config 2> /dev/null && [[ "x$tag" != "xbase" ]];then
+    if grep -q removeafterpush ../.config 2> /dev/null && [[ "x$tag" != "xbase" ]];then
         docker rmi $target || true
         docker rmi "registry.eeems.codes/$image" || true
     fi
