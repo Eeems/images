@@ -4,7 +4,8 @@ FROM eeems/nuitka-arm-builder:bullseye-base
 ARG PYTHON=3.12
 RUN <<EOT
   pyenv install "$PYTHON"
-  pyenv exec "$PYTHON" python -m venv /opt/lib/nuitka
+  pyenv global "$PYTHON"
+  pyenv exec python -m venv /opt/lib/nuitka
   source /opt/lib/nuitka/bin/activate
   pip install \
     --extra-index-url https://wheels.eeems.codes/ \
