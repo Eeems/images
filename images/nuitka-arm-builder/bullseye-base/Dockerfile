@@ -42,3 +42,5 @@ RUN <<EOT
 EOT
 
 ENV PATH="/opt/lib/pyenv/bin:$PATH"
+
+ADD setup.sh /opt/bin
