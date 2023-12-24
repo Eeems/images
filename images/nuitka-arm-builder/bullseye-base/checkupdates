@@ -1,0 +1,3 @@
+#!/bin/bash
+apt update &> /dev/null
+apt list --upgradable 2> /dev/null | grep -v Listing...

@@ -1,11 +1,18 @@
+#syntax=docker/dockerfile:1.4
 FROM ubuntu:latest
 LABEL maintainer='Nathaniel van Diepen'
 
 WORKDIR /root
 
-RUN apt-get update && \
-  DEBIAN_FRONTEND="noninteractive" apt-get dist-upgrade -y && \
-  DEBIAN_FRONTEND="noninteractive" apt-get install -y \
+COPY --link checkupdates /usr/bin/checkupdates
+COPY --link update /usr/local/bin/update
+
+RUN <<EOT
+  set -ex
+  export DEBIAN_FRONTEND="noninteractive"
+  apt-get update
+  apt-get dist-upgrade -y
+  apt-get install -y \
     bc \
     build-essential \
     curl \
@@ -14,8 +21,7 @@ RUN apt-get update && \
     git \
     libssl-dev \
     lzop \
-    python3 &&\
+    python3
+  apt-get clean
   rm -rf /var/lib/apt/lists/*
-
-COPY --link checkupdates /usr/bin/checkupdates
-COPY --link update /usr/local/bin/update
+EOT

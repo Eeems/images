@@ -95,6 +95,9 @@ build-tag(){
     local latest="eeems/$(image-name "$name" latest)"
     local from=$latest
     local fromLine="$(head -n1 Dockerfile)"
+    if [[ "$fromLine" == "#syntax=docker/dockerfile:1.4" ]]; then
+        fromLine="$(head -n2 Dockerfile | tail -n1)"
+    fi
     if [[ "ARG FROM" != "$fromLine" ]] && [[ "FROM" == "$(echo "$fromLine" | awk '{print $1}')" ]];then
       fromLine="$(echo "$fromLine" | awk '{print $2}')"
       from="${fromLine//$'\r'/}"
@@ -108,7 +111,7 @@ build-tag(){
         echo "  Dockerfile changed"
         rebuild=1
     else
-        if [[ "x$(grep nobasecheck ../.config 2> /dev/null)" == "x" ]] && [[ "$from" != "eeems/$name:"* ]] && docker pull "$from" | grep -q "Downloaded newer image";then
+        if ! grep -q nobasecheck ../.config 2> /dev/null && [[ "$from" != "eeems/$name:"* ]] && docker pull "$from" | grep -q "Downloaded newer image";then
             echo "  New base image"
             rebuild=1
         fi
@@ -142,9 +145,19 @@ build-tag(){
             echo "# $(date)" >> .tmp.dockerfile
             echo "RUN /usr/local/bin/update" >> .tmp.dockerfile
         fi
+        platform=local
+        if grep -q platform= ../.config 2> /dev/null; then
+            platform="$(
+                grep platform= ../.config \
+                | cut -d= -f2 \
+                | tr "\n" "," \
+                | sed 's/,*$//'
+            )"
+        fi
         docker buildx build \
             --build-arg BUILDKIT_INLINE_CACHE=1 \
             --build-arg "FROM=$from" \
+            --platform "$platform" \
             $cacheflags \
             --load \
             --tag $target \
@@ -157,7 +170,7 @@ build-tag(){
     else
         echo "Skipping image '$image'";
     fi
-    if [[ "x$(grep removeafterpush ../.config 2> /dev/null)" == "x" ]] && [[ "x$tag" != "xbase" ]];then
+    if ! grep -q removeafterpush ../.config 2> /dev/null && [[ "x$tag" != "xbase" ]];then
         docker rmi $target
         docker rmi "registry.eeems.codes/$image"
     fi
