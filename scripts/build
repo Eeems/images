@@ -107,6 +107,7 @@ build-tag(){
         rebuild=1
     elif ! docker pull "$target" &> /dev/null;then
         echo "  Image missing or could not be downloaded"
+        rebuild=1
     elif [[ "$(docker run "$target" cat /hash 2> /dev/null)" != "$hash" ]];then
         echo "  Dockerfile changed"
         rebuild=1
@@ -124,10 +125,7 @@ build-tag(){
             fi
         fi
     fi
-    if [ $rebuild != 0 ] \
-        || [ $updates != 0 ] \
-        || ! docker manifest inspect $target &> /dev/null \
-        || ! docker manifest inspect "registry.eeems.codes/$image" &> /dev/null; then
+    if [ $rebuild != 0 ] || [ $updates != 0 ]; then
         status "Building image '$image'"
         echo "$hash" > .hash
         cat Dockerfile > .tmp.dockerfile
