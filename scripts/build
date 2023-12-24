@@ -124,7 +124,10 @@ build-tag(){
             fi
         fi
     fi
-    if [ $rebuild != 0 ] || [ $updates != 0 ] || docker manifest inspect $target > /dev/null || docker manifest inspect "registry.eeems.codes/$image" > /dev/null;then
+    if [ $rebuild != 0 ] \
+        || [ $updates != 0 ] \
+        || ! docker manifest inspect $target &> /dev/null \
+        || ! docker manifest inspect "registry.eeems.codes/$image" &> /dev/null; then
         status "Building image '$image'"
         echo "$hash" > .hash
         cat Dockerfile > .tmp.dockerfile
@@ -171,8 +174,8 @@ build-tag(){
         echo "Skipping image '$image'";
     fi
     if ! grep -q removeafterpush ../.config 2> /dev/null && [[ "x$tag" != "xbase" ]];then
-        docker rmi $target
-        docker rmi "registry.eeems.codes/$image"
+        docker rmi $target || true
+        docker rmi "registry.eeems.codes/$image" || true
     fi
     if [ -n $pruneflag ];then
         docker system prune -f
