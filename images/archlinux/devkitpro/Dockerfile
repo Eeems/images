@@ -3,7 +3,6 @@ ARG FROM
 FROM $FROM
 
 RUN <<EOT
-    set -ex
     sudo pacman-key --init
     sudo pacman-key --recv BC26F752D25B92CE272E0F44F7FD5492264BB9D0 --keyserver keyserver.ubuntu.com
     sudo pacman-key --lsign BC26F752D25B92CE272E0F44F7FD5492264BB9D0

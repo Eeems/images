@@ -3,7 +3,6 @@ ARG FROM
 FROM $FROM
 
 RUN <<EOT
-    set -ex
     yay -Syu --noconfirm
     yay -S --noconfirm rust
     yay -Scc --noconfirm

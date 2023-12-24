@@ -1,8 +1,9 @@
 #syntax=docker/dockerfile:1.4
 FROM archlinux:base-devel
 
+SHELL ["/bin/bash", "-exc"]
+
 RUN <<EOT
-    set -ex
     useradd -m notroot
     echo "notroot ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/notroot
 EOT
@@ -11,7 +12,6 @@ USER notroot
 WORKDIR /home/notroot
 
 RUN <<EOT
-    set -ex
     sudo pacman-key --init
     sudo pacman -Syu --noconfirm
     sudo pacman -S --needed --noconfirm git base-devel pacman-contrib reflector

@@ -2,7 +2,6 @@
 FROM eeems/archlinux:base-devel
 
 RUN <<EOT
-    set -ex
     mkdir .gnupg
     chmod 700 .gnupg
     touch .gnupg/gpg.conf

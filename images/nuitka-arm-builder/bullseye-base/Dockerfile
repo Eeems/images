@@ -1,8 +1,9 @@
 #syntax=docker/dockerfile:1.4
 FROM arm32v7/debian:bullseye-slim
 
+SHELL ["/bin/bash", "-exc"]
+
 RUN <<EOT
-  set -ex
   export DEBIAN_FRONTEND="noninteractive"
   apt-get update
   apt-get install -y \
@@ -20,7 +21,6 @@ EOT
 ENV PYENV_ROOT="~/.pyenv"
 
 RUN <<EOT
-  set -ex
   export DEBIAN_FRONTEND="noninteractive"
   apt-get update
   apt-get install -y git

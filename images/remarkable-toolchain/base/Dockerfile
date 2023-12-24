@@ -7,8 +7,9 @@ WORKDIR /root
 COPY --link checkupdates /usr/bin/checkupdates
 COPY --link update /usr/local/bin/update
 
+SHELL ["/bin/bash", "-exc"]
+
 RUN <<EOT
-  set -ex
   export DEBIAN_FRONTEND="noninteractive"
   apt-get update
   apt-get dist-upgrade -y
