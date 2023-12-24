@@ -8,7 +8,7 @@ RUN <<EOT
   apt-get update
   apt-get install -y \
     ccache \
-    clang \
+    build-essential \
     curl \
     libffi-dev \
     patchelf \
