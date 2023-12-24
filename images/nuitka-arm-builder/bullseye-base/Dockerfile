@@ -18,7 +18,7 @@ RUN <<EOT
   rm -rf /var/lib/apt/lists/* /var/log/dpkg.log /var/log/apt
 EOT
 
-ENV PYENV_ROOT="~/.pyenv"
+ENV PYENV_ROOT="/opt/lib/pyenv"
 
 RUN <<EOT
   export DEBIAN_FRONTEND="noninteractive"
@@ -30,4 +30,4 @@ RUN <<EOT
   rm -rf /var/lib/apt/lists/* /var/log/dpkg.log /var/log/apt
 EOT
 
-ENV PATH="$PYENV_ROOT/bin:$PATH"
+ENV PATH="/opt/lib/pyenv/bin:$PATH"
