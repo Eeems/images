@@ -31,7 +31,7 @@ RUN <<EOT
     sudo rm -R /var/lib/pacman/sync
     yay -Syu --noconfirm
     yay -S --noconfirm namcap rsync openssh clang llvm
-    yay -S --noconfirm checkupdates+aur chronic
+    yay -S --noconfirm checkupdates-with-aur chronic
     yay -Scc --noconfirm
     sudo paccache -rk 0
 EOT
