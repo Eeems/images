@@ -9,7 +9,7 @@ RUN <<EOT
     echo "keyserver-options auto-key-retrieve" > .gnupg/gpg.conf
     sudo pacman-key --recv A64228CCD26972801C2CE6E3EC931EA46980BA1B --keyserver keyserver.ubuntu.com
     sudo pacman-key --lsign A64228CCD26972801C2CE6E3EC931EA46980BA1B
-    sudo curl --header 'Host: repo.eeems.codes' https://repo.eeems.codes/eeems-linux/eeems-keyring-20220620-1-any.pkg.tar.zst --output eeems-keyring.tar.zst
+    sudo curl --header 'Host: repo.eeems.codes' https://repo.eeems.codes/eeems-linux/eeems-keyring-20240520-1-any.pkg.tar.zst --output eeems-keyring.tar.zst
     sudo pacman -U --noconfirm ./eeems-keyring.tar.zst
     sudo rm eeems-keyring.tar.zst
     sudo sed -i 's|^\(SyncFirst    =.*\)$|\1 eeems-keyring|' /etc/pacman.conf
