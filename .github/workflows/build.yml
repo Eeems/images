@@ -17,7 +17,7 @@ jobs:
       images-matrix: ${{ steps.images-matrix.outputs.JSON_CONTENT }}
     steps:
       - name: Checkout the Git repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Get image list
         id: images-matrix
         run: |
@@ -55,7 +55,7 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
       - name: Docker prune
         run: docker system prune --force
       - name: Build and publish ${{ matrix.image }}
