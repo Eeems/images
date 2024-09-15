@@ -15,11 +15,12 @@ RUN <<EOT
     sudo pacman-key --init
     sudo pacman -Syu --noconfirm
     sudo pacman -S --needed --noconfirm git base-devel pacman-contrib reflector
-    git clone https://aur.archlinux.org/yay-bin.git --depth=1
-    cd yay-bin
+    git clone https://aur.archlinux.org/yay.git --depth=1
+    cd yay
     makepkg -si --noconfirm
+    yay --version
     cd ..
-    rm -rf yay-bin
+    rm -rf yay
     sudo pacman -Scc --noconfirm
     sudo paccache -rk 0
 EOT
