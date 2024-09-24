@@ -108,7 +108,7 @@ build-tag(){
     elif ! docker pull "$target" &> /dev/null;then
         echo "  Image missing or could not be downloaded"
         rebuild=1
-    elif [[ "$(docker run "$target" cat /hash 2> /dev/null)" != "$hash" ]];then
+    elif [[ "$(docker run --rm "$target" cat /hash 2> /dev/null)" != "$hash" ]];then
         echo "  Dockerfile changed"
         rebuild=1
     else
@@ -117,7 +117,7 @@ build-tag(){
             rebuild=1
         fi
         if [ $rebuild -eq 0 ];then
-            local output="$(docker run "$target" /usr/bin/checkupdates 2> /dev/null || true)"
+            local output="$(docker run --rm "$target" /usr/bin/checkupdates 2> /dev/null || true)"
             updates=$(echo "$output" | awk NF | wc -l)
             if [ $updates != 0 ];then
                 echo "  $updates update(s) detected:"
