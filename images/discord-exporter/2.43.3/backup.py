@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 import json
 import os
 import re
+import time
 import shutil
 import subprocess
 
@@ -128,8 +129,12 @@ class Timestamps:
 
     def set_timestamp(self, guildId, timestamp) -> None:
         self._timestampsGuilds[guildId] = timestamp
-        with open(self._timestamp_path, "r", encoding="utf-8") as f:
-            json_content = json.load(f)
+        try:
+            with open(self._timestamp_path, "r", encoding="utf-8") as f:
+                json_content = json.load(f)
+
+        except FileNotFoundError:
+            json_content = {}
 
         with open(self._timestamp_path, "w", encoding="utf-8") as f:
             json_content["lastExportsTimestamps"] = self._timestampsGuilds
@@ -210,10 +215,17 @@ class CommandRunner:
 
 
 def main():
-    timestamps = Timestamps()
-    config = Config()
-    command_runner = CommandRunner(config=config, timestamps=timestamps)
-    command_runner.export()
+    interval = int(os.environ.get("INTERVAL", 60 * 60))  # default to 1 hour
+    cmd = os.environ.get("RESTART_COMMAND", None)
+    while True:
+        timestamps = Timestamps()
+        config = Config()
+        command_runner = CommandRunner(config=config, timestamps=timestamps)
+        command_runner.export()
+        if cmd is not None:
+            subprocess.check_call(["/bin/sh", "-c", cmd])
+
+        time.sleep(interval)
 
 
 if __name__ == "__main__":

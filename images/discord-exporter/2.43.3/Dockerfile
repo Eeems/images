@@ -4,7 +4,7 @@ FROM alpine:latest
 RUN <<EOT
   mkdir -p /dce
   cd /dce
-  apk add --no-cache python3 icu wget
+  apk add --no-cache python3 icu wget docker-cli
   wget https://github.com/nulldg/DiscordChatExporterPlus/releases/download/2.43.3/DiscordChatExporterPlus.Cli.linux-musl-x64.zip
   unzip DiscordChatExporterPlus.Cli.linux-musl-x64.zip
   apk del --no-cache wget
