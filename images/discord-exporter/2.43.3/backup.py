@@ -6,7 +6,6 @@ import json
 import os
 import re
 import time
-import shutil
 import subprocess
 
 # dry run option for development
@@ -73,7 +72,7 @@ class Config:
                     f'Guild must have "{required_field}" field defined - found fields {guild.keys()}'
                 )
                 exit(1)
-            if type(guild[required_field]) != str:
+            if type(guild[required_field]) is not str:
                 print(
                     f'Guild field "{required_field}" must be a string - found {type(guild[required_field])}'
                 )
@@ -96,7 +95,7 @@ class Config:
             )
             exit(1)
 
-        if "enabled" in guild and type(guild["enabled"]) != bool:
+        if "enabled" in guild and type(guild["enabled"]) is not bool:
             print(
                 f'Optional guild field "enabled" must be a boolean if set - found {type(guild["enabled"])}'
             )
@@ -179,7 +178,7 @@ class CommandRunner:
                     continue
 
             dce_path = '"/dce/DiscordChatExporterPlus.Cli"'
-            common_args = f"--format Json --media --reuse-media --markdown false"
+            common_args = "--format Json --media --reuse-media --markdown false"
             custom_args = f'--token "{guild["tokenValue"]}" --media-dir "/exports/{guild["guildName"]}/_media/" --output "/exports/{guild["guildName"]}/{nowTimestampFolder}/"'
 
             if guild["type"] == "exportguild":
@@ -223,8 +222,10 @@ def main():
         command_runner = CommandRunner(config=config, timestamps=timestamps)
         command_runner.export()
         if cmd is not None:
-            subprocess.check_call(["/bin/sh", "-c", cmd])
+            print(f"Running: {cmd}")
+            subprocess.check_output(["/bin/sh", "-c", cmd])
 
+        print(f"Waiting for {interval} seconds...")
         time.sleep(interval)
 
 
