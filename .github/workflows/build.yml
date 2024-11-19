@@ -56,8 +56,15 @@ jobs:
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      - name: Docker prune
-        run: docker system prune --force
+      - name: Clean up system
+        run: |
+          rm -rf .git/
+          docker system prune --force
+          docker rmi $(docker image ls -aq) || true
+          docker system prune --force
+          export DEBIAN_FRONTEND="noninteractive"
+          sudo apt-get autoremove -y
+          sudo apt-get autoclean -y
       - name: Build and publish ${{ matrix.image }}
         run: ./scripts/build -p -g images ${{ matrix.image }}
       - name: Docker prune
