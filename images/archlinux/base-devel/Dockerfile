@@ -6,6 +6,7 @@ SHELL ["/bin/bash", "-exc"]
 RUN <<EOT
     useradd -m notroot
     echo "notroot ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/notroot
+    sed -i 's|#DisableSandbox|DisableSandbox|' /etc/pacman.conf
 EOT
 
 USER notroot
