@@ -7,7 +7,7 @@ RUN <<EOT
     useradd -m notroot
     echo "notroot ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/notroot
     sed -i 's|#DisableSandbox|DisableSandbox|' /etc/pacman.conf
-    sed -i 's|^DownloadUser\s*=|#DownloadUser=|' /etc/pacman.conf
+    sed -i 's|^DownloadUser|#DownloadUser|' /etc/pacman.conf
 EOT
 
 USER notroot
