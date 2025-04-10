@@ -1,4 +1,5 @@
 #!/bin/bash
+pyenv update
 pyenv install "$1"
 lib_path="$(pyenv prefix "$1")/lib"
 # Hack to get --static-libpython=yes to work for nuitka

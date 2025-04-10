@@ -36,7 +36,6 @@ RUN <<EOT
   apt-get update
   apt-get install -y git
   curl https://pyenv.run | bash
-  apt-get autoremove -y git
   apt-get clean
   rm -rf /var/lib/apt/lists/* /var/log/dpkg.log /var/log/apt
 EOT
