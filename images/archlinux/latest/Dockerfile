@@ -9,9 +9,6 @@ RUN <<EOT
     echo "keyserver-options auto-key-retrieve" > .gnupg/gpg.conf
     sudo pacman-key --recv A64228CCD26972801C2CE6E3EC931EA46980BA1B --keyserver keyserver.ubuntu.com
     sudo pacman-key --lsign A64228CCD26972801C2CE6E3EC931EA46980BA1B
-    sudo curl --header 'Host: repo.eeems.codes' https://repo.eeems.codes/eeems-linux/eeems-keyring-20240520-1-any.pkg.tar.zst --output eeems-keyring.tar.zst
-    sudo pacman -U --noconfirm ./eeems-keyring.tar.zst
-    sudo rm eeems-keyring.tar.zst
     sudo sed -i 's|^\(SyncFirst    =.*\)$|\1 eeems-keyring|' /etc/pacman.conf
     sudo sed -i 's|^\#\(ParallelDownloads = .*\)$|\1|' /etc/pacman.conf
     echo '[eeems-calc]' | sudo tee -a /etc/pacman.conf
@@ -30,7 +27,7 @@ RUN <<EOT
     echo 'Include = /etc/pacman.d/mirrorlist' | sudo tee -a /etc/pacman.conf
     sudo rm -R /var/lib/pacman/sync
     yay -Syu --noconfirm
-    yay -S --noconfirm namcap rsync openssh clang llvm
+    yay -S --noconfirm eeems-keyring namcap rsync openssh clang llvm
     yay -S --noconfirm checkupdates-with-aur chronic
     yay -Scc --noconfirm
     sudo paccache -rk 0
