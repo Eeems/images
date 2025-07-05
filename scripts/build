@@ -135,11 +135,11 @@ build-tag(){
             cacheflags="--no-cache"
         else
             cacheflags="--cache-from $from"
-            if [ -n $ghaflag ];then
+            if [[ -n $ghaflag ]];then
                 cacheflags="$cacheflags --cache-from type=gha"
             fi
         fi
-        if [ -n $ghaflag ];then
+        if [[ -n $ghaflag ]];then
             cacheflags="$cacheflags --cache-to type=gha"
         fi
         if [ $rebuild == 0 ] && [ $updates != 0 ];then
@@ -175,7 +175,7 @@ build-tag(){
         docker rmi $target || true
         docker rmi "registry.eeems.codes/$image" || true
     fi
-    if [ -n $pruneflag ];then
+    if [[ -n $pruneflag ]];then
         docker system prune -f
     fi
     popd > /dev/null
