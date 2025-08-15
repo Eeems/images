@@ -3,6 +3,7 @@ ARG FROM
 FROM $FROM
 
 RUN <<EOT
+    sudo reflector --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
     yay -Syu --noconfirm
     yay -S --noconfirm wayland
     yay -Scc --noconfirm
