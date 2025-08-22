@@ -2,7 +2,7 @@
 FROM eeems/archlinux:base-devel
 
 RUN <<EOT
-    sudo reflector --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
+    sudo reflector --latest 5 --sort rate --save /etc/pacman.d/mirrorlist || true
     mkdir .gnupg
     chmod 700 .gnupg
     touch .gnupg/gpg.conf
