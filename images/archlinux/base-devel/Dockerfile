@@ -16,7 +16,7 @@ WORKDIR /home/notroot
 RUN <<EOT
     sudo pacman-key --init
     sudo pacman -Syu --noconfirm
-    sudo pacman -S --needed --noconfirm git base-devel pacman-contrib reflector
+    sudo pacman -S --needed --noconfirm git base-devel pacman-contrib reflector rsync
     git clone https://aur.archlinux.org/yay.git --depth=1
     cd yay
     makepkg -si --noconfirm
