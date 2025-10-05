@@ -17,7 +17,8 @@ RUN <<EOT
     sudo pacman-key --init
     sudo pacman -Syu --noconfirm
     sudo pacman -S --needed --noconfirm git base-devel pacman-contrib reflector rsync
-    git clone https://aur.archlinux.org/yay.git --depth=1
+    # git clone https://aur.archlinux.org/yay.git --depth=1
+    git clone --branch "yay" --single-branch https://github.com/archlinux/aur.git yay
     cd yay
     makepkg -si --noconfirm
     yay --version
