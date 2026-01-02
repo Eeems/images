@@ -1,2 +1,2 @@
 #syntax=docker/dockerfile:1.4
-FROM eeems/remarkable-toolchain:5.2.96-rmppm
+FROM eeems/remarkable-toolchain:5.3.95-rmppm
