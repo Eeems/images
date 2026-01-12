@@ -65,7 +65,19 @@ jobs:
           export DEBIAN_FRONTEND="noninteractive"
           sudo apt-get autoremove -y
           sudo apt-get autoclean -y
+          sudo rm -rf \
+            /usr/lib/jvm \
+            /usr/share/dotnet \
+            /usr/share/swift \
+            /usr/local/.ghcup \
+            /usr/local/julia* \
+            /usr/local/lib/android \
+            /usr/local/share/chromium \
+            /opt/microsoft /opt/google \
+            /opt/az \
+            /usr/local/share/powershell
       - name: Build and publish ${{ matrix.image }}
         run: ./scripts/build -p -g images ${{ matrix.image }}
       - name: Docker prune
         run: docker system prune --force
+
