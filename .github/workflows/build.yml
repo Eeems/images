@@ -58,6 +58,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
       - name: Clean up system
         run: |
+          df -h
           rm -rf .git/
           docker system prune --force
           docker rmi $(docker image ls -aq) || true
@@ -76,8 +77,10 @@ jobs:
             /opt/microsoft /opt/google \
             /opt/az \
             /usr/local/share/powershell
+          df -h
       - name: Build and publish ${{ matrix.image }}
         run: ./scripts/build -p -g images ${{ matrix.image }}
       - name: Docker prune
         run: docker system prune --force
+
 
