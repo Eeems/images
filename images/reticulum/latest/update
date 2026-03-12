@@ -2,4 +2,6 @@
 set -e
 apk upgrade --no-cache
 pip install --upgrade --root-user-action=ignore pip
-pip install --upgrade --root-user-action=ignore rns
+pip install --upgrade --root-user-action=ignore \
+  rns \
+  lxmf

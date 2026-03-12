@@ -6,7 +6,9 @@ COPY --link update /usr/local/bin/update
 RUN <<EOT
   set -e
   update
-  pip install --root-user-action=ignore rns
+  pip install --root-user-action=ignore \
+    rns \
+    lxmf
   ln -s /config /root/.reticulum
 EOT
 
