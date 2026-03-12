@@ -1,0 +1,3 @@
+#!/bin/sh
+apk list --upgradable --no-cache | grep '\[upgradable from:' | cut -d' ' -f1
+pip list --outdated | tail -n+3
