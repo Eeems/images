@@ -14,4 +14,4 @@ EOT
 
 COPY --link checkupdates /usr/bin/checkupdates
 
-ENTRYPOINT ["/usr/local/bin/rnsd", "--config=/config"]
+ENTRYPOINT ["/usr/local/bin/rnsd", "--config=/config", "--interactive"]
