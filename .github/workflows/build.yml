@@ -7,7 +7,7 @@ on:
       - README.md
       - LICENSE
   schedule:
-    - cron: '0 */6 * * *'
+    - cron: "0 */6 * * *"
   workflow_dispatch:
 jobs:
   setup:
@@ -17,7 +17,7 @@ jobs:
       images-matrix: ${{ steps.images-matrix.outputs.JSON_CONTENT }}
     steps:
       - name: Checkout the Git repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Get image list
         id: images-matrix
         run: |
@@ -34,15 +34,15 @@ jobs:
       fail-fast: false
     steps:
       - name: Checkout the Git repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Login to registry.eeems.codes
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: registry.eeems.codes
           username: github
           password: ${{ secrets.CR_PAT }}
       - name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: eeems
           password: ${{ secrets.DOCKER_AT }}
@@ -53,9 +53,9 @@ jobs:
           packages: moreutils
           version: 1.0
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       - name: Clean up system
         run: |
           df -h
@@ -82,5 +82,3 @@ jobs:
         run: ./scripts/build -p -g images ${{ matrix.image }}
       - name: Docker prune
         run: docker system prune --force
-
-
