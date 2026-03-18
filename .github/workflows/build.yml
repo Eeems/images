@@ -47,7 +47,7 @@ jobs:
           username: eeems
           password: ${{ secrets.DOCKER_AT }}
       - name: Install chronic
-        uses: Eeems-Org/apt-cache-action@v1
+        uses: Eeems-Org/apt-cache-action@v1.5
         with:
           packages: moreutils
       - name: Set up QEMU
