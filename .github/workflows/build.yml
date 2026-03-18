@@ -47,11 +47,9 @@ jobs:
           username: eeems
           password: ${{ secrets.DOCKER_AT }}
       - name: Install chronic
-        id: cache-apt
-        uses: awalsh128/cache-apt-pkgs-action@latest
+        uses: Eeems-Org/apt-cache-action@v1
         with:
           packages: moreutils
-          version: 1.0
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
       - name: Set up Docker Buildx
