@@ -1,6 +1,6 @@
 #!/bin/ash
 set -e
-export RNS_CONFIG_PATH=${RNS_CONFIG_PATH:-/config}
+source /setup
 if [ $# -ne 0 ]; then
   exec "$@"
 fi
