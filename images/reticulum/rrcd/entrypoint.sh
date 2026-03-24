@@ -2,6 +2,6 @@
 set -e
 /setup
 if [ $# -ne 0 ]; then
-  exec '$@"'
+  exec "$@"
 fi
 exec rrcd --config=/config

@@ -3,7 +3,7 @@ set -e
 /setup
 cd /app
 if [ $# -ne 0 ]; then
-  exec '$@"'
+  exec "$@"
 fi
 exec python echobot.py \
   --identity-file "${ECHOBOT_IDENTITY_PATH:-$RNS_CONFIG_PATH/echobot_identity}" \
