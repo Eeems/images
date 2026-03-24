@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/ash
 set -e
 source /setup
 if [ $# -ne 0 ]; then

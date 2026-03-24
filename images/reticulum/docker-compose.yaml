@@ -1,0 +1,52 @@
+services:
+  rnsd:
+    image: eeems/reticulum:latest
+    networks: [reticulum]
+    ports:
+      - target: 4242
+        published: 4242
+        protocol: tcp
+        mode: host
+      - target: 29716
+        published: 29716
+        protocol: udp
+        mode: host
+      - target: 42671
+        published: 42671
+        protocol: udp
+        mode: host
+    volumes:
+      - rnsd:/config
+
+  lxmd:
+    image: eeems/reticulum:lxmd
+    networks: [reticulum]
+    volumes:
+      - lxmd:/config
+
+  echobot:
+    image: eeems/reticulum:echobot
+    networks: [reticulum]
+    volumes:
+      - echobot:/config
+
+  nomadnet:
+    image: eeems/reticulum:nomadnet
+    networks: [reticulum]
+    volumes:
+      - nomadnet:/config
+
+  rrcd:
+    image: eeems/reticulum:rrcd
+    networks: [reticulum]
+    volumes:
+      - rrcd:/config
+
+volumes:
+  rnsd:
+  lxmd:
+  echobot:
+  nomadnet:
+  rrcd:
+networks:
+  reticulum:

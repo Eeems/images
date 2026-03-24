@@ -2,14 +2,28 @@
 set -e
 
 export RNS_CONFIG_PATH="${RNS_CONFIG_PATH:-/config}"
-export RNS_HOST="${RNS_HOST:-reticulum}"
 export RNS_PORT="${RNS_PORT:-4242}"
 
+if [[ "$IS_HOST" == "1" ]]; then
+  host_line="listen_on = 0.0.0.0"
+  port_line="port = $RNS_PORT"
+  auto_enabled="yes"
+  enable_transport="yes"
+  discover_interfaces="yes"
+else
+  export RNS_HOST="${RNS_HOST:-rnsd}"
+  host_line="remote = $RNS_HOST"
+  port_line="target_port = $RNS_PORT"
+  auto_enabled="no"
+  enable_transport="no"
+  discover_interfaces="no"
+fi
 config=$(
   cat <<EOF
 [reticulum]
-  enable_transport = False
-  share_instance = Yes
+  enable_transport = $enable_transport
+  share_instance = yes
+  discover_interfaces = $discover_interfaces
 
 [logging]
   loglevel = 4
@@ -17,13 +31,13 @@ config=$(
 [interfaces]
   [[Default Interface]]
     type = AutoInterface
-    enabled = False
+    enabled = $auto_enabled
 
   [[Local]]
     type = BackboneInterface
-    enabled = Yes
-    remote = $RNS_HOST
-    target_port = $RNS_PORT
+    enabled = yes
+    $host_line
+    $port_line
 EOF
 )
 if [ ! -d "$RNS_CONFIG_PATH" ]; then

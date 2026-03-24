@@ -16,4 +16,5 @@ COPY setup.sh /setup
 COPY entrypoint.sh /entrypoint
 COPY checkupdates /usr/bin/checkupdates
 
+EXPOSE 4242
 ENTRYPOINT ["/entrypoint"]
