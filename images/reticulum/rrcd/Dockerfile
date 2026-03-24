@@ -2,8 +2,13 @@
 ARG FROM
 FROM $FROM
 
-RUN pip install --root-user-action=ignore \
-  git+https://github.com/kc1awv/rrcd.git
+RUN <<EOT
+  set -e
+  apk add --no-cache git
+  pip install --root-user-action=ignore \
+    git+https://github.com/kc1awv/rrcd.git
+  apk del git
+EOT
 
 COPY entrypoint.sh /entrypoint
 
