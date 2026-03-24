@@ -9,7 +9,7 @@ if [ $# -ne 0 ]; then
   exec "$@"
 fi
 exec -a echobot \
-  python echobot.py \
+  echobot \
   --identity-file "$ECHOBOT_IDENTITY_PATH" \
   --display-name "$ECHOBOT_NAME" \
   --announce-interval-seconds "$ECHOBOT_ANNOUNCE_INTERVAL"

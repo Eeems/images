@@ -9,7 +9,6 @@ mkdir -p "$RNS_CONFIG_PATH"
 flags=
 if [ -t 0 ]; then
   flags=--interactive
-else
 fi
 exec -a rnsd \
   /usr/local/bin/rnsd \

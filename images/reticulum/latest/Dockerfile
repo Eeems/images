@@ -1,5 +1,7 @@
 # syntax=docker/dockerfile:1
-FROM python:3.14-alpine3.23
+ARG PYTHON=3.14
+ARG ALPINE=3.23
+FROM python:${PYTHON}-alpine${ALPINE}
 
 COPY update /usr/local/bin/update
 
@@ -13,10 +15,14 @@ RUN <<EOT
   ln -s /config /root/.reticulum
 EOT
 
+ARG PYTHON
+ENV PYTHONPATH /usr/local/lib/python${PYTHON}/site-packages
+
 COPY setup.sh /setup
 COPY entrypoint.sh /entrypoint
 COPY checkupdates /usr/bin/checkupdates
 COPY isup.sh /usr/bin/isup
+COPY nuitka.sh /usr/bin/nuitka
 
 EXPOSE 4242
 ENTRYPOINT ["/entrypoint"]

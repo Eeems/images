@@ -2,8 +2,21 @@
 ARG FROM
 FROM $FROM
 
-RUN  pip install --root-user-action=ignore \
-  nomadnet
+RUN  <<EOT
+  set -e
+  mkdir /src
+  cd src
+  pip install --root-user-action=ignore nomadnet
+  echo "from nomadnet.nomadnet import main; main()" > main.py
+  python main.py --help
+  nuitka --mode=accelerated --include-package=nomadnet main.py
+  ./main.bin --help
+  pip uninstall --yes --root-user-action=ignore nomadnet
+  mv ./main.bin /usr/local/bin/nomadnet
+  cd
+  rm -rf /src
+  nomadnet --help
+EOT
 
 COPY entrypoint.sh /entrypoint
 

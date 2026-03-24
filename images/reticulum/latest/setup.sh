@@ -3,7 +3,6 @@ set -e
 
 export RNS_CONFIG_PATH="${RNS_CONFIG_PATH:-/config}"
 export RNS_PORT="${RNS_PORT:-4242}"
-
 if [[ "$IS_HOST" == "1" ]]; then
   host_line="listen_on = 0.0.0.0"
   port_line="port = $RNS_PORT"
