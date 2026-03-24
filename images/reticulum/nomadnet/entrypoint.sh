@@ -6,5 +6,6 @@ if [ $# -ne 0 ]; then
 fi
 exec -a nomadnet \
   nomadnet \
+  --config="$RNS_CONFIG_PATH"/nomadnetwork \
   --daemon \
-  --config="$RNS_CONFIG_PATH"/nomadnetwork
+  --console
