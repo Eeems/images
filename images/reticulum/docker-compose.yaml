@@ -21,24 +21,28 @@ services:
   lxmd:
     image: eeems/reticulum:lxmd
     networks: [reticulum]
+    depends_on: [rnsd]
     volumes:
       - lxmd:/config
 
   echobot:
     image: eeems/reticulum:echobot
     networks: [reticulum]
+    depends_on: [rnsd]
     volumes:
       - echobot:/config
 
   nomadnet:
     image: eeems/reticulum:nomadnet
     networks: [reticulum]
+    depends_on: [rnsd]
     volumes:
       - nomadnet:/config
 
   rrcd:
     image: eeems/reticulum:rrcd
     networks: [reticulum]
+    depends_on: [rnsd]
     volumes:
       - rrcd:/config
 
