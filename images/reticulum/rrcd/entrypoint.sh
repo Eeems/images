@@ -1,6 +1,6 @@
 #!/bin/ash
 set -e
-/setup
+source /setup
 export RRCD_HUB_NAME="${RRCD_HUB_NAME:-RRC}"
 if [ $# -ne 0 ]; then
   exec "$@"

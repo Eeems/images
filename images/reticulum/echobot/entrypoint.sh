@@ -1,6 +1,6 @@
 #!/bin/ash
 set -e
-/setup
+source /setup
 export ECHOBOT_IDENTITY_PATH="${ECHOBOT_IDENTITY_PATH:-$RNS_CONFIG_PATH/echobot_identity}"
 export ECHOBOT_NAME="${ECHOBOT_NAME:-Echo Bot}"
 export ECHOBOT_ANNOUNCE_INTERVAL="${ECHOBOT_ANNOUNCE_INTERVAL:-360}"

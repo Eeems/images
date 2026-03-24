@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e
-/setup
+source /setup
 if [ $# -ne 0 ]; then
   exec "$@"
 fi
