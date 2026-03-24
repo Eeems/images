@@ -5,7 +5,7 @@ if [ $# -ne 0 ]; then
   exec "$@"
 fi
 exec lxmd \
-  --config=/config \
-  --rnsconfig=/config \
+  --config="$RNS_CONFIG_PATH"/lxmf \
+  --rnsconfig"=$RNS_CONFIG_PATH" \
   --verbose \
   --propagation-node
