@@ -6,8 +6,11 @@ if [ $# -ne 0 ]; then
   exec "$@"
 fi
 mkdir -p "$RNS_CONFIG_PATH"
+flags=
 if [ -t 0 ]; then
-  exec /usr/local/bin/rnsd --interactive
+  flags=--interactive
 else
-  exec /usr/local/bin/rnsd
 fi
+exec -a rnsd \
+  /usr/local/bin/rnsd \
+  $flags
