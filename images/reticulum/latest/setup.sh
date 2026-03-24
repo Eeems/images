@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/ash
 set -e
 
 export RNS_CONFIG_PATH="${RNS_CONFIG_PATH:-/config}"
