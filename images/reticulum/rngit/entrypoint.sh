@@ -27,6 +27,9 @@ fi
 if [[ "$ANNOUNCE_INTERVAL" != "" ]]; then
   flags="$flags --announce-interval=$ANNOUNCE_INTERVAL"
 fi
+if [[ "$ANNOUNCE_NAME" != "" ]]; then
+  flags="$flags --name=$ANNOUNCE_NAME"
+fi
 mkdir -p "$RNS_CONFIG_PATH"
 mkdir -p "$REPO_PATH"
 exec -a rngit \
