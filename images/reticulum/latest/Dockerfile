@@ -16,7 +16,7 @@ RUN <<EOT
 EOT
 
 ARG PYTHON
-ENV PYTHONPATH /usr/local/lib/python${PYTHON}/site-packages
+ENV PYTHONPATH=/usr/local/lib/python${PYTHON}/site-packages
 
 COPY setup.sh /setup
 COPY entrypoint.sh /entrypoint
