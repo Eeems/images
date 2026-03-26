@@ -8,7 +8,7 @@ mkdir -p /data
 if [ ! -d /data/themes ]; then
   cp -r /usr/share/retibbs/themes /data/
 fi
-if [ ! -d "$RNS_CONFIG_PATH"/server_config.json ]; then
+if [ ! -f "$RNS_CONFIG_PATH"/server_config.json ]; then
   cp -r /usr/share/retibbs/server_config.dist "$RNS_CONFIG_PATH"/server_config.json
 fi
 cd /data
