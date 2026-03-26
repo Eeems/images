@@ -63,7 +63,7 @@ services:
       ALLOW_READ:
       ALLOW_WRITE: 4bbc9219ce924a7d77e00584523c2d4e
       ANNOUNCE_INTERVAL: 300
-      ANNOUNCE_NAME: rngit
+      ANNOUNCE_NAME:
 
 volumes:
   rnsd-config:

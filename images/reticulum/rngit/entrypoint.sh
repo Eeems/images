@@ -1,4 +1,4 @@
-#!/bin/ash
+#!/bin/bash
 set -e
 source /setup
 if [ $# -ne 0 ]; then
@@ -8,12 +8,12 @@ REPO_PATH=${REPO_PATH:-/data}
 echo "RNS_CONFIG_PATH: $RNS_CONFIG_PATH"
 echo "REPO_PATH: $REPO_PATH"
 ALLOW_ALL_READ=${ALLOW_ALL_READ:-0}
-flags=
+flags=()
 f() {
-  flags="$flags --allow-$1=$2"
+  flags+=("--allow-$1=$2")
 }
 if [[ "$ALLOW_ALL_READ" == "1" ]]; then
-  flags=--allow-all-read
+  flags+=(--allow-all-read)
 elif [[ "$ALLOW_READ" != "" ]]; then
   while read -r i; do
     f read "$i"
@@ -25,12 +25,12 @@ if [[ "$ALLOW_WRITE" != "" ]]; then
   done < <(echo "$ALLOW_WRITE" | xargs)
 fi
 if [[ "$ANNOUNCE_INTERVAL" != "" ]]; then
-  flags="$flags --announce-interval=$ANNOUNCE_INTERVAL"
+  flags+=("--announce-interval=$ANNOUNCE_INTERVAL")
 fi
 if [[ "$ANNOUNCE_NAME" != "" ]]; then
-  flags="$flags --name=$ANNOUNCE_NAME"
+  flags+=("--name=$ANNOUNCE_NAME")
 fi
 mkdir -p "$RNS_CONFIG_PATH"
 mkdir -p "$REPO_PATH"
 exec -a rngit \
-  rngit $flags --verbose "$REPO_PATH"
+  rngit "${flags[@]}" --verbose "$REPO_PATH"
