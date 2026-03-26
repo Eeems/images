@@ -37,6 +37,8 @@ services:
     image: eeems/reticulum:rrcd
     networks: [reticulum]
     depends_on: [rnsd]
+    environment:
+      RRCD_HUB_NAME:
     volumes:
       - rrcd-config:/config
 
