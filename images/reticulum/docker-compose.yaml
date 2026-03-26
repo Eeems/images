@@ -39,6 +39,7 @@ services:
     depends_on: [rnsd]
     environment:
       RRCD_HUB_NAME:
+      ANNOUNCE_INTERVAL: 300
     volumes:
       - rrcd-config:/config
 

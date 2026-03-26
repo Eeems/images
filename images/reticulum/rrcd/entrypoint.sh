@@ -2,6 +2,7 @@
 set -e
 source /setup
 export RRCD_HUB_NAME="${RRCD_HUB_NAME:-RRC}"
+export ANNOUNCE_INTERVAL="${ANNOUNCE_INTERVAL:-300}"
 if [ $# -ne 0 ]; then
   exec "$@"
 fi
@@ -14,4 +15,5 @@ exec -a rrcd \
   --configdir="$RNS_CONFIG_PATH" \
   --identity="$RNS_CONFIG_PATH"/hub_identity \
   --room-registry="$RNS_CONFIG_PATH"/rrcd/rooms.toml \
-  --hub-name="${RRCD_HUB_NAME}"
+  --hub-name="${RRCD_HUB_NAME}" \
+  --announce-period="${ANNOUNCE_INTERVAL}"
