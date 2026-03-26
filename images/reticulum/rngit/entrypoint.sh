@@ -15,14 +15,14 @@ f() {
 if [[ "$ALLOW_ALL_READ" == "1" ]]; then
   flags+=(--allow-all-read)
 elif [[ "$ALLOW_READ" != "" ]]; then
-  while read -r i; do
+  for i in $ALLOW_READ; do
     f read "$i"
-  done < <(echo "$ALLOW_READ" | xargs)
+  done
 fi
 if [[ "$ALLOW_WRITE" != "" ]]; then
-  while read -r i; do
+  for i in $ALLOW_WRITE; do
     f write "$i"
-  done < <(echo "$ALLOW_WRITE" | xargs)
+  done
 fi
 if [[ "$ANNOUNCE_INTERVAL" != "" ]]; then
   flags+=("--announce-interval=$ANNOUNCE_INTERVAL")
