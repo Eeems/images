@@ -68,6 +68,15 @@ services:
       ANNOUNCE_INTERVAL: 300
       ANNOUNCE_NAME:
 
+  retibbs:
+    hostname: retibbs
+    image: eeems/reticulum:retibbs
+    networks: [reticulum]
+    depends_on: [rnsd]
+    volumes:
+      - retibbs-config:/config
+      - retibbs-data:/data
+
 volumes:
   rnsd-config:
   lxmd-config:
@@ -77,6 +86,8 @@ volumes:
   teapot-config:
   rngit-config:
   rngit-data:
+  retibbs-config:
+  retibbs-data:
 networks:
   reticulum:
     driver: bridge

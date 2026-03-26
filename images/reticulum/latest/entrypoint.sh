@@ -12,5 +12,5 @@ if [ -t 0 ]; then
 fi
 exec -a rnsd \
   /usr/local/bin/rnsd \
-  $flags \
-  -vvvv
+  -vvvv \
+  $flags
