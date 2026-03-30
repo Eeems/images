@@ -33,4 +33,7 @@ fi
 mkdir -p "$RNS_CONFIG_PATH"
 mkdir -p "$REPO_PATH"
 exec -a rngit \
-  rngit "${flags[@]}" --verbose "$REPO_PATH"
+  rngit "${flags[@]}" \
+  --nomadnet \
+  --verbose \
+  "$REPO_PATH"

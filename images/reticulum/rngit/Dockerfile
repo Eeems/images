@@ -5,7 +5,7 @@ FROM $FROM
 RUN <<EOT
   set -e
   apk add --no-cache git bash
-  pip install --root-user-action=ignore git-remote-rns
+  pip install --root-user-action=ignore git-remote-rns[web]
 EOT
 
 COPY entrypoint.sh /entrypoint
