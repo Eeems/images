@@ -4,10 +4,16 @@ FROM $FROM
 
 RUN <<EOT
   set -e
-  apk add --no-cache git bash
-  pip install --root-user-action=ignore git-remote-rns[web]
+  install-nuitka
+  apk add --no-cache gcc
+  pip install \
+    --root-user-action=ignore \
+    --no-binary git-remote-rns \
+    git-remote-rns[web]
   git-remote-rns --help
   rngit --help
+  uninstall-nuitka
+  apk add --no-cache git bash
 EOT
 
 COPY entrypoint.sh /entrypoint

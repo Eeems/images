@@ -22,6 +22,8 @@ COPY setup.sh /setup
 COPY entrypoint.sh /entrypoint
 COPY checkupdates /usr/bin/checkupdates
 COPY isup.sh /usr/bin/isup
+COPY install-nuitka.sh /usr/bin/install-nuitka
+COPY uninstall-nuitka.sh /usr/bin/uninstall-nuitka
 COPY nuitka.sh /usr/bin/nuitka
 
 EXPOSE 4242
