@@ -1,6 +1,6 @@
 #!/bin/ash
 set -e
-
+export PYTHONUNBUFFERED=1
 export RNS_CONFIG_PATH="${RNS_CONFIG_PATH:-/config}"
 export RNS_PORT="${RNS_PORT:-4242}"
 if [[ "$IS_HOST" == "1" ]]; then
