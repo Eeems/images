@@ -7,8 +7,7 @@ RUN <<EOT
   mkdir /src
   cd src
   pip install --root-user-action=ignore \
-    nomadnet \
-    msgpack
+    nomadnet
   echo "import nomadnet.ui as m;f=open(m.__file__, 'a');f.write(f'\n__all__ = {m.__all__}\n')" | python -u
   echo "import nomadnet.ui.textui as m;f=open(m.__file__, 'a');f.write(f'\n__all__ = {m.__all__}\n')" | python -u
   echo "from nomadnet.nomadnet import main; main()" > main.py
