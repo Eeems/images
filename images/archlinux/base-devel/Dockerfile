@@ -13,6 +13,7 @@ EOT
 USER notroot
 WORKDIR /home/notroot
 
+COPY --link clean /usr/local/bin/clean
 RUN <<EOT
     sudo pacman-key --init
     sudo pacman -Syu --noconfirm
@@ -24,8 +25,7 @@ RUN <<EOT
     yay --version
     cd ..
     rm -rf yay
-    sudo pacman -Scc --noconfirm
-    sudo paccache -rk 0
+    clean
 EOT
 
 COPY --link update /usr/local/bin/update

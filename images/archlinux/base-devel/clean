@@ -1,0 +1,7 @@
+#!/bin/bash
+yay -Scc --noconfirm
+sudo paccache -rk 0
+rm -rf \
+  ~/.cache/* \
+  ~/.config/go
+sudo rm -f /var/log/pacman.log

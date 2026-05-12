@@ -28,10 +28,17 @@ RUN <<EOT
     echo 'Include = /etc/pacman.d/mirrorlist' | sudo tee -a /etc/pacman.conf
     sudo rm -R /var/lib/pacman/sync
     yay -Syu --noconfirm
-    yay -S --noconfirm eeems-keyring namcap rsync openssh clang llvm
-    yay -S --noconfirm checkupdates-with-aur chronic
-    yay -Scc --noconfirm
-    sudo paccache -rk 0
+    yay -S --noconfirm \
+      eeems-keyring \
+      namcap \
+      rsync \
+      openssh \
+      clang \
+      llvm
+    yay -S --noconfirm \
+      checkupdates-with-aur \
+      chronic
+    clean
 EOT
 
 WORKDIR /pkg

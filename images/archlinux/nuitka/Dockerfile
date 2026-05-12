@@ -10,6 +10,5 @@ RUN <<EOT
       python-pip \
       ccache \
       scons
-    yay -Scc --noconfirm
-    sudo paccache -rk 0
+    clean
 EOT

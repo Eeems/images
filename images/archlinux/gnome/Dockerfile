@@ -6,6 +6,5 @@ RUN <<EOT
     sudo reflector --latest 5 --sort rate --save /etc/pacman.d/mirrorlist || true
     yay -Syu --noconfirm
     yay -S --noconfirm gnome-shell
-    yay -Scc --noconfirm
-    sudo paccache -rk 0
+    clean
 EOT
