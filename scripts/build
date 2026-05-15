@@ -26,26 +26,25 @@ status() {
 image-name() {
     echo "$1:${2:-latest}"
 }
-group(){
-    if [[ -n $ghaflag ]];then
+group() {
+    if [[ -n $ghaflag ]]; then
         echo "::group::$1"
     fi
 }
-endgroup(){
-    if [[ -n $ghaflag ]];then
+endgroup() {
+    if [[ -n $ghaflag ]]; then
         echo "::endgroup::"
     fi
 }
 
-
 while getopts hgfpv name; do
     case $name in
-        h) helpflag=1 ;;
-        f) forceflag=1 ;;
-        g) ghaflag=1 ;;
-        p) pruneflag=1 ;;
-        v) set -x ;;
-        *) error "Invalid option. Use the -h flag for more information." ;;
+    h) helpflag=1 ;;
+    f) forceflag=1 ;;
+    g) ghaflag=1 ;;
+    p) pruneflag=1 ;;
+    v) set -x ;;
+    *) error "Invalid option. Use the -h flag for more information." ;;
     esac
 done
 
@@ -76,16 +75,16 @@ has-element() {
     done
     return 1
 }
-build-tag(){
+build-tag() {
     local name="$1"
     local tag="$2"
     group "$name:$tag"
-    if ! [ -d "$tag" ];then
+    if ! [ -d "$tag" ]; then
         echo "Folder $name/$tag not found"
         endgroup
         return
     fi
-    pushd $tag > /dev/null
+    pushd $tag >/dev/null
     local image="$(image-name "$name" "$2")"
     local target="eeems/$image"
     status "Checking image '$image'"
@@ -98,28 +97,28 @@ build-tag(){
     if [[ "$fromLine" == "#syntax=docker/dockerfile:1.4" ]]; then
         fromLine="$(head -n2 Dockerfile | tail -n1)"
     fi
-    if [[ "ARG FROM" != "$fromLine" ]] && [[ "FROM" == "$(echo "$fromLine" | awk '{print $1}')" ]];then
-      fromLine="$(echo "$fromLine" | awk '{print $2}')"
-      from="${fromLine//$'\r'/}"
+    if [[ "ARG FROM" != "$fromLine" ]] && [[ "FROM" == "$(echo "$fromLine" | awk '{print $1}')" ]]; then
+        fromLine="$(echo "$fromLine" | awk '{print $2}')"
+        from="${fromLine//$'\r'/}"
     fi
-    if [[ -n $forceflag ]];then
+    if [[ -n $forceflag ]]; then
         echo "  Force rebuild"
         rebuild=1
-    elif ! docker pull "$target" &> /dev/null;then
+    elif ! docker pull "$target" &>/dev/null; then
         echo "  Image missing or could not be downloaded"
         rebuild=1
-    elif [[ "$(docker run --rm "$target" cat /hash 2> /dev/null)" != "$hash" ]];then
+    elif [[ "$(docker run --rm "$target" cat /hash 2>/dev/null)" != "$hash" ]]; then
         echo "  Dockerfile changed"
         rebuild=1
     else
-        if ! grep -q nobasecheck ../.config 2> /dev/null && [[ "$from" != "eeems/$name:"* ]] && docker pull "$from" | grep -q "Downloaded newer image";then
+        if ! grep -q nobasecheck ../.config 2>/dev/null && [[ "$from" != "eeems/$name:"* ]] && docker pull "$from" | grep -q "Downloaded newer image"; then
             echo "  New base image"
             rebuild=1
         fi
-        if [ $rebuild -eq 0 ];then
-            local output="$(docker run --rm "$target" /usr/bin/checkupdates 2> /dev/null || true)"
+        if [ $rebuild -eq 0 ]; then
+            local output="$(docker run --rm "$target" /usr/bin/checkupdates 2>/dev/null || true)"
             updates=$(echo "$output" | awk NF | wc -l)
-            if [ $updates != 0 ];then
+            if [ $updates != 0 ]; then
                 echo "  $updates update(s) detected:"
                 echo "$(echo -e "$output" | awk NF | sed 's/^/    /')"
             fi
@@ -127,32 +126,32 @@ build-tag(){
     fi
     if [ $rebuild != 0 ] || [ $updates != 0 ]; then
         status "Building image '$image'"
-        echo "$hash" > .hash
-        cat Dockerfile > .tmp.dockerfile
-        echo "COPY .hash /hash" >> .tmp.dockerfile
+        echo "$hash" >.hash
+        cat Dockerfile >.tmp.dockerfile
+        echo "COPY .hash /hash" >>.tmp.dockerfile
         local cacheflags=
-        if [ $rebuild != 0 ];then
+        if [ $rebuild != 0 ]; then
             cacheflags="--no-cache"
         else
             cacheflags="--cache-from $from"
-            if [[ -n $ghaflag ]];then
+            if [[ -n $ghaflag ]]; then
                 cacheflags="$cacheflags --cache-from type=gha"
             fi
         fi
-        if [[ -n $ghaflag ]];then
+        if [[ -n $ghaflag ]]; then
             cacheflags="$cacheflags --cache-to type=gha"
         fi
-        if [ $rebuild == 0 ] && [ $updates != 0 ];then
-            echo "# $(date)" >> .tmp.dockerfile
-            echo "RUN /usr/local/bin/update" >> .tmp.dockerfile
+        if [ $rebuild == 0 ] && [ $updates != 0 ]; then
+            echo "# $(date)" >>.tmp.dockerfile
+            echo "RUN /usr/local/bin/update" >>.tmp.dockerfile
         fi
         platform=local
-        if grep -q platform= ../.config 2> /dev/null; then
+        if grep -q platform= ../.config 2>/dev/null; then
             platform="$(
-                grep platform= ../.config \
-                | cut -d= -f2 \
-                | tr "\n" "," \
-                | sed 's/,*$//'
+                grep platform= ../.config |
+                    cut -d= -f2 |
+                    tr "\n" "," |
+                    sed 's/,*$//'
             )"
         fi
         docker buildx build \
@@ -169,58 +168,69 @@ build-tag(){
         #docker tag $target "registry.eeems.codes/$image"
         #docker push "registry.eeems.codes/$image"
     else
-        echo "Skipping image '$image'";
+        echo "Skipping image '$image'"
     fi
-    if grep -q removeafterpush ../.config 2> /dev/null && [[ "x$tag" != "xbase" ]];then
+    if grep -q removeafterpush ../.config 2>/dev/null && [[ "x$tag" != "xbase" ]]; then
         docker rmi $target || true
         #docker rmi "registry.eeems.codes/$image" || true
     fi
-    if [[ -n $pruneflag ]];then
+    if [[ -n $pruneflag ]]; then
         docker system prune -f
     fi
-    popd > /dev/null
+    popd >/dev/null
     endgroup
 }
-build-image(){
+build-image() {
     local start
     local name="$1"
-    if ! [ -d "$name" ];then
+    if ! [ -d "$name" ]; then
         echo "Folder $name not found"
         return
     fi
-    pushd "$name" > /dev/null
-    if [[ $# -eq 1 ]];then
+    pushd "$name" >/dev/null
+    if [[ $# -eq 1 ]]; then
         local order=(latest)
-        if [ -f .order ];then
-            readarray -t order < .order
+        if [ -f .order ]; then
+            readarray -t order <.order
         fi
-        for tag in "${order[@]}";do
+        local skip=()
+        for i in "${!order[@]}"; do
+            tag="${order[$i]}"
+            if [[ "$tag" == "!"* ]]; then
+                skip+=("${tag/\!/}")
+                unset 'order[i]'
+            fi
+        done
+        for tag in "${skip[@]}"; do
+            echo "Skipping tag: $tag"
+        done
+        for tag in "${order[@]}"; do
             build-tag "$name" "$tag"
         done
-        \ls | while read tag;do
-            if [ -d "$tag" ] && ! has-element "$tag" "${order[@]}";then
+        \ls | while read tag; do
+            if ! has-element "$tag" "${skip[@]}" && [ -d "$tag" ] && ! has-element "$tag" "${order[@]}"; then
                 build-tag "$name" "$tag"
             fi
         done
     else
         build-tag "$name" "$2"
     fi
-    popd > /dev/null
+    popd >/dev/null
 }
 
-pushd "$imagesdir" > /dev/null
+pushd "$imagesdir" >/dev/null
 if [[ $# -eq 1 ]]; then
-    \ls | while read name;do
+    \ls | while read name; do
         build-image "$name"
     done
-elif [[ $# -eq 2 ]];then
+elif [[ $# -eq 2 ]]; then
     build-image "$2"
-elif [[ $# -eq 3 ]];then
+elif [[ $# -eq 3 ]]; then
     build-image "$2" "$3"
 else
     echo "Unknown number of arguments"
     echo "$usage"
 fi
-popd > /dev/null
+popd >/dev/null
 
 status "Done"
