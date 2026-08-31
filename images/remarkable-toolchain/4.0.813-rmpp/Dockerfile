@@ -1,7 +1,12 @@
 FROM eeems/remarkable-toolchain:base
 
 RUN <<EOT
-  for i in 1 2 3 4 5; do curl -L -o install-toolchain.sh https://ipfs.eeems.website/ipfs/QmQpagE9boGRLDv2iUuY9huxFZepDqivgb9uAW5BEArN1C && break || sleep $((i*3)); done
+  for i in 1 2 3 4 5; do
+    if curl -L -o install-toolchain.sh https://ipfs.eeems.website/ipfs/QmQpagE9boGRLDv2iUuY9huxFZepDqivgb9uAW5BEArN1C; then
+      break
+    fi
+    sleep $((i*3))
+  done
   echo "29e2cce4280dbde182937c9614681a59a14aca8a18e06957bf66f8aeb0f3b968  install-toolchain.sh" | sha256sum --check
   chmod +x install-toolchain.sh
   ./install-toolchain.sh -y
