@@ -1,7 +1,7 @@
 FROM eeems/remarkable-toolchain:base
 
 RUN <<EOT
-  curl --retry 5 --retry-connrefused --retry-delay 3 https://ipfs.eeems.website/ipfs/Qmdw66tZo2ZPRqicK4dtiUUskdHnDFZNpRAKBS5iYKKDTw -o install-toolchain.sh
+  for i in 1 2 3 4 5; do curl -L -o install-toolchain.sh https://ipfs.eeems.website/ipfs/Qmdw66tZo2ZPRqicK4dtiUUskdHnDFZNpRAKBS5iYKKDTw && break || sleep 3; done
   echo "1a9a5b4f9bebb6798f890ad91bdba0eddc11e8afee18d5d79e40da193e66411f  install-toolchain.sh" | sha256sum --check
   chmod +x install-toolchain.sh
   ./install-toolchain.sh -y
