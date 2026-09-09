@@ -10,7 +10,7 @@ RUN <<EOT
       ;;
     arm64)
       url="https://storage.googleapis.com/remarkable-codex-toolchain/3.27.0.97/chiappa/remarkable-production-image-5.7.119-chiappa-public-aarch64-toolchain.sh"
-      checksum=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+      checksum=d6e6512f812d1e1c8f721fe1cce957fec461434fd3bd04ce50ff6fdd5744e1ff
       ;;
     *)
       echo "$TARGETARCH not supported"
