@@ -1,3 +1,4 @@
+#syntax=docker/dockerfile:1.4
 FROM eeems/remarkable-toolchain:base
 
 ARG TARGETARCH
@@ -5,11 +6,11 @@ ARG TARGETARCH
 RUN <<EOT
   case $TARGETARCH in
     amd64)
-      url="https://storage.googleapis.com/remarkable-codex-toolchain/3.27.0.97/chiappa/remarkable-production-image-5.7.119-chiappa-public-x86_64-toolchain.sh"
-      checksum=f22794bc6bb6729e648a7404a561e870d537818bd62a2f9950522f0cf15b4130
+      url="https://storage.googleapis.com/remarkable-codex-toolchain/3.28.0.172/remarkable-production-image-5.8.203-chiappa-public-x86_64-toolchain.sh"
+      checksum=150826499b9e02b80d1acdfb89cad6b68bcf0b8862fb5258efd90ace115f2d54
       ;;
     arm64)
-      url="https://storage.googleapis.com/remarkable-codex-toolchain/3.27.0.97/chiappa/remarkable-production-image-5.7.119-chiappa-public-aarch64-toolchain.sh"
+      url="https://storage.googleapis.com/remarkable-codex-toolchain/3.28.0.172/remarkable-production-image-5.8.203-chiappa-public-aarch64-toolchain.sh"
       checksum=ae0dcec8ff161a90f72b5bbeb77f11c5a14c6c6045c1655584561935994c1832
       ;;
     *)
