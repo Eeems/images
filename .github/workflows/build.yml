@@ -33,6 +33,7 @@ jobs:
       matrix: ${{ fromJson(needs.setup.outputs.images-matrix) }}
       fail-fast: false
     steps:
+      - uses: depot/use-containerd-snapshotter-action@v1
       - name: Checkout the Git repository
         uses: actions/checkout@v6
       # - name: Login to registry.eeems.codes
