@@ -5,6 +5,10 @@ SHELL ["/bin/bash", "-exc"]
 
 RUN <<EOT
   export DEBIAN_FRONTEND="noninteractive"
+  cat > /etc/apt/sources.list <<EOF
+  deb http://archive.debian.org/debian bullseye main
+  deb [check-valid-until=no] http://archive.debian.org/debian-security bullseye-security main
+  EOF
   apt-get update
   apt-get install -y \
     build-essential \
@@ -36,6 +40,7 @@ RUN <<EOT
   apt-get update
   apt-get install -y git
   curl https://pyenv.run | bash
+  apt-get remove -y git
   apt-get clean
   rm -rf /var/lib/apt/lists/* /var/log/dpkg.log /var/log/apt
 EOT
