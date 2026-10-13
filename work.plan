@@ -1,0 +1,111 @@
+# Plan: Update Debian Bullseye base to use archive.debian.org
+
+## Problem Summary
+
+The Debian Bullseyi base image (eeems/nuitka-arm-builder:bullseye-base) relies on standard Debian package repositories that are now unreachable because Debian Bullseyi has reached end-of-life (EOL). The old URLs have moved to archive.debian.org, and security release files have expired. This pull request fixes the base Dockerfile and updates security repo configuration, with the remaining issue being a publish failure that needs to be investigated and resolved.
+
+## Approach
+
+The implementation is straightforward: fix the repository URLs and configuration. The challenge is the final publish failure, which requires investigation before attempting to fix.
+
+## Steps
+
+### Step 1 — Update Dockerfile base URL to use archive.debian.org
+- **File:** `images/nuitka-arm-builder/bullseye-base/Dockerfile`
+- **Action:** Modify the base repository URL from `deb http://deb.debian.org/debian release main` to `deb http://archive.debian.org/debian main release`
+- **Expected outcome:** Dockerfile now references the archive mirror instead of the dead upstream URL
+
+### Step 2 — Update security repository URL to use archive.debian.org
+- **File:** `images/nuitka-arm-builder/bullseye-base/Dockerfile`
+- **Action:** Modify the security repository line to `deb [check-valid-until=no] http://archive.debian.org/debian-security bullseye-security main`
+- **Expected outcome:** Security repo uses archive mirror and includes required flag
+
+### Step 3 — Verify inheritance of bullseye-base
+- **Files:** 
+  - `images/nuitka-arm-builder/bullseye/Dockerfile`
+  - `images/nuitka-arm-builder/bullseye-3.9/Dockerfile`
+  - `images/nuitka-arm-builder/bullseye-3.10/Dockerfile`
+  - `images/nuitka-arm-builder/bullseye-3.11/Dockerfile`
+  - `images/nuitka-arm-builder/bullseye-3.12/Dockerfile`
+  - `images/nuitka-arm-builder/bullseye-3.13/Dockerfile`
+  - `images/nuitka-arm-builder/bullseye-3.14/Dockerfile`
+- **Action:** Verify each inherits from `eeems/nuitka-arm-builder:bullseye-base`
+- **Expected outcome:** All variants correctly reference the base image
+
+### Step 4 — Verify workflow configuration for PR builds
+- **File:** `.github/workflows/build.yml`
+- **Action:** Confirm that `workflow_dispatch` trigger exists and build uses `-n` flag
+- **Expected outcome:** PR triggers correctly, `-n` flag present in build command
+
+### Step 5 — Investigate and resolve publish failure
+- **File:** Not applicable (investigation required)
+- **Action:** Run PR build with `-n` flag, examine console logs, identify root cause, and apply fix if needed
+- **Expected outcome:** Build completes without push step; any fix verified by successful CI
+
+### Step 6 — Document final verification
+- **Action:** Confirm all changes deploy successfully
+- **Expected outcome:** All CI tests pass, no build failures, `check-valid-until=no` is satisfied
+
+## Testing
+
+For each step:
+- Verify expected content using `grep` or `read` tool
+- For PR builds: confirm they skip push step (verified by successful CI run)
+
+## Risks/Unknowns
+
+- **Archive mirror stability:** Archive URLs may change; not a regression, just normal Debian migration
+- **Debian-specific:** `[check-valid-until=no]` is a Debian security repository policy; valid until files are expired
+- **Publish failure:** Cause unknown—may be unrelated to fixes (e.g., authentication, permission issues)
+- **CI environment:** Sandbox may block some network access; need to confirm CI succeeds
+
+## Assumptions
+
+- All variants of nuitka-arm-builder (bullseye, bullseye-3.9 through 3.14) correctly inherit from bullseye-base
+- PR builds with `-n` flag behave as designed (skip Docker Hub login and push)
+- CI/CD environment in sandbox allows necessary network access to archive.debian.org
+- Debian archive mirrors are stable enough for builds to succeed
+- `check-valid-until=no` is the correct fix for expired security release files
+
+## Evidence
+
+**Step 1 & 2 (Dockerfile fix):**
+- Current file: `images/nuitka-arm-builder/bullseye-base/Dockerfile`
+- Expected: `deb http://archive.debian.org/debian main release` and `deb [check-valid-until=no] http://archive.debian.org/debian-security bullseye-security main`
+- PR summary confirms: "Modified `bullseye-base` Dockerfile to reference `archive.debian.org.`"
+
+**Step 3 (Inheritance):**
+- Base file: `images/nuitka-arm-builder/bullseye-base/Dockerfile` has `FROM` line: `FROM eeems/nuitka-arm-builder:bullseye-base`
+- Variants: `images/nuitka-arm-builder/bullseye/Dockerfile`, `images/nuitka-arm-builder/bullseye-3.9/Dockerfile`, `images/nuitka-arm-builder/bullseye-3.10/Dockerfile`, `images/nuitka-arm-builder/bullseye-3.11/Dockerfile`, `images/nuitka-arm-builder/bullseye-3.12/Dockerfile`, `images/nuitka-arm-builder/bullseye-3.13/Dockerfile`, `images/nuitka-arm-builder/bullseye-3.14/Dockerfile`
+- Expected: All variants have `FROM eeems/nuitka-arm-builder:bullseye-base`
+- PR summary confirms: "All bullseye-based images inherit from this base"
+
+**Step 4 (Workflow):**
+- File: `.github/workflows/build.yml`
+- Expected: `workflow_dispatch` trigger exists, build command uses `-n` flag
+- PR summary confirms: "PR builds to workflow — they run the build but skip Docker Hub login and don't push images. The build script now has a `-n` flag for this."
+
+**Step 5 (Publish failure):**
+- Status: PR build failed with "Publish nuitka-arm-builder completed failure"
+- Action: Run PR build with `-n` flag and determine cause
+
+**Step 6 (Verification):**
+- Expected: All CI tests pass, no build failures, `check-valid-until=no` is satisfied, PR builds skip push step
+
+## Notes
+
+- All steps implement exactly as specified (URLs, configuration, inheritance, workflow) from the PR summary
+- Archive mirrors are stable enough for builds; not a regression
+- Debian security repo requirement: `[check-valid-until=no]` is required for expired Release files
+- The publish failure needs investigation before attempting to fix; do not assume it's related to the URL fixes
+- CI environment in sandbox allows necessary network access to archive.debian.org
+- No staged files; worker implements changes directly
+- No commits; worker implements changes directly
+- Worker verifies expected changes before attempting final verification
+- Worker does not assume archive URLs are stable; just implements fix
+- Worker may assume CI environment allows access
+- Worker assumes `[check-valid-until=no]` is correct for expired security release files
+- Worker does not assume PR build failure is URL-related
+- Worker does not assume Docker Hub login failure is a blocker
+
+The plan is complete and implementation-ready.
