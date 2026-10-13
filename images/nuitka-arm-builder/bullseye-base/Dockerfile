@@ -1,6 +1,7 @@
 #syntax=docker/dockerfile:1.4
 FROM arm32v7/debian:bullseye-slim
 
+# Uses archive.debian.org (Debian Bullseye EOL). The old URLs are dead, causing builds to fail.
 SHELL ["/bin/bash", "-exc"]
 
 RUN <<EOT
