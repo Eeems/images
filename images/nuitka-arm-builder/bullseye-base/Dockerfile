@@ -7,28 +7,29 @@ SHELL ["/bin/bash", "-exc"]
 RUN <<EOT
   export DEBIAN_FRONTEND="noninteractive"
   cat > /etc/apt/sources.list <<EOF
-  deb http://archive.debian.org/debian bullseye main
-  deb [check-valid-until=no] http://archive.debian.org/debian-security bullseye-security main
+    deb http://archive.debian.org/debian bullseye main
+    deb [check-valid-until=no] http://archive.debian.org/debian-security bullseye-security main
   EOF
+
   apt-get update
-  apt-get install -y \
-    build-essential \
-    ccache \
-    curl \
-    libbz2-dev \
-    libffi-dev \
-    liblzma-dev \
-    libncursesw5-dev \
-    libreadline-dev \
-    libsqlite3-dev \
-    libssl-dev \
-    libxml2-dev \
-    libxmlsec1-dev \
-    patchelf \
-    python3-dev \
-    tk-dev \
-    upx \
-    xz-utils \
+  apt-get install -y 
+    build-essential 
+    ccache 
+    curl 
+    libbz2-dev 
+    libffi-dev 
+    liblzma-dev 
+    libncursesw5-dev 
+    libreadline-dev 
+    libsqlite3-dev 
+    libssl-dev 
+    libxml2-dev 
+    libxmlsec1-dev 
+    patchelf 
+    python3-dev 
+    tk-dev 
+    upx 
+    xz-utils 
     zlib1g-dev
   apt-get clean
   rm -rf /var/lib/apt/lists/* /var/log/dpkg.log /var/log/apt
