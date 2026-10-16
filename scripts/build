@@ -9,7 +9,8 @@ Options:
     -f              Force rebuild
     -v              set -x
     -p              Prune between each build
-    -g              Use github actions cache"
+    -g              Use github actions cache
+    -n              No push (build only)"
 
 helpflag=
 forceflag=
@@ -37,13 +38,14 @@ endgroup() {
     fi
 }
 
-while getopts hgfpv name; do
+while getopts hgfpvn name; do
     case $name in
     h) helpflag=1 ;;
     f) forceflag=1 ;;
     g) ghaflag=1 ;;
     p) pruneflag=1 ;;
     v) set -x ;;
+    n) nopushflag=1 ;;
     *) error "Invalid option. Use the -h flag for more information." ;;
     esac
 done
@@ -164,9 +166,11 @@ build-tag() {
             --file .tmp.dockerfile $(pwd)
         rm .hash
         rm .tmp.dockerfile
-        docker push $target
-        #docker tag $target "registry.eeems.codes/$image"
-        #docker push "registry.eeems.codes/$image"
+        if [[ -z $nopushflag ]]; then
+            docker push $target
+            #docker tag $target "registry.eeems.codes/$image"
+            #docker push "registry.eeems.codes/$image"
+        fi
     else
         echo "Skipping image '$image'"
     fi
