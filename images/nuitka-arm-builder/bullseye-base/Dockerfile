@@ -5,10 +5,8 @@ SHELL ["/bin/bash", "-exc"]
 
 RUN <<EOT
   export DEBIAN_FRONTEND="noninteractive"
-  cat > /etc/apt/sources.list <<EOF
-  deb http://archive.debian.org/debian bullseye main
-  deb [check-valid-until=no] http://archive.debian.org/debian-security bullseye-security main
-  EOF
+  echo 'deb [check-valid-until=no] http://archive.debian.org/debian bullseye main' > /etc/apt/sources.list
+  echo 'deb [check-valid-until=no] http://archive.debian.org/debian-security bullseye-security main' >> /etc/apt/sources.list
   apt-get update
   apt-get install -y \
     build-essential \
