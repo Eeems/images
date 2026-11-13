@@ -22,7 +22,8 @@ RUN <<EOT
     git \
     libssl-dev \
     lzop \
-    python3
+    python3 \
+    zstd
   apt-get clean
   rm -rf /var/lib/apt/lists/*
 EOT
