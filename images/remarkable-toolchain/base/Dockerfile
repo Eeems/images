@@ -1,4 +1,3 @@
-#syntax=docker/dockerfile:1.4
 FROM ubuntu:latest
 LABEL maintainer='Nathaniel van Diepen'
 
