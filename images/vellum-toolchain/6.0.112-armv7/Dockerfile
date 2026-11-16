@@ -15,3 +15,4 @@ EOT
 RUN rustup toolchain install nightly --profile minimal --target armv7-unknown-linux-gnueabihf
 
 ENV PATH="$PATH:/usr/lib/qt6/libexec"
+ENV CARGO_BUILD_TARGET="armv7-unknown-linux-gnueabihf"

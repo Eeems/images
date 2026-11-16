@@ -15,3 +15,4 @@ EOT
 RUN rustup toolchain install nightly --profile minimal --target aarch64-unknown-linux-gnu
 
 ENV PATH="$PATH:/usr/lib/qt6/libexec"
+ENV CARGO_BUILD_TARGET="aarch64-unknown-linux-gnu"
