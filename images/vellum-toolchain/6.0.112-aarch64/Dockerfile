@@ -7,7 +7,10 @@ RUN <<EOT
   apt-get install -y \
     qt6-base-dev \
     golang-go \
-    cargo
+    rustup
   apt-get clean
   rm -rf /var/lib/apt/lists/*
+  ln -sf /usr/lib/qt6/libexec/rcc /usr/local/bin/rcc
 EOT
+
+RUN rustup toolchain install nightly --profile minimal --target aarch64-unknown-linux-gnu
