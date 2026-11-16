@@ -10,7 +10,8 @@ RUN <<EOT
     rustup
   apt-get clean
   rm -rf /var/lib/apt/lists/*
-  ln -sf /usr/lib/qt6/libexec/rcc /usr/local/bin/rcc
 EOT
 
 RUN rustup toolchain install nightly --profile minimal --target armv7-unknown-linux-gnueabihf
+
+ENV PATH="$PATH:/usr/lib/qt6/libexec"
